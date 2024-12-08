@@ -15,7 +15,7 @@ type
   private
     m_cards: TCardList;
     function AllSameSuit: boolean;
-    function SelectedCount: integer;
+    function GetSelectedCount: integer;
     function IsRoyalFlush: boolean;
     function IsStraightFlush: boolean;
     function IsFourKind: boolean;
@@ -31,8 +31,10 @@ type
     destructor Destroy; override;
     procedure Add(acard: TCard);
     procedure Sort;
+    procedure Remove(acard: TCard);
     function ApplyPokerRules: TPokerScore;
     property Cards: TCardList read m_cards;
+    property SelectedCount: integer read GetSelectedCount;
   end;
 
 
@@ -68,7 +70,7 @@ begin
   result := true;
 end;
 
-function THand.SelectedCount: integer;
+function THand.GetSelectedCount: integer;
 var
   total: integer;
   card: TCard;
@@ -92,7 +94,7 @@ begin
   ok := AllSameSuit;
   if not ok then exit;
 
-  ok := SelectedCount = 5;
+  ok := GetSelectedCount = 5;
   if not ok then exit;
 
   // ...
@@ -110,7 +112,7 @@ begin
   ok := AllSameSuit;
   if not ok then exit;
 
-  ok := SelectedCount = 5;
+  ok := GetSelectedCount = 5;
   if not ok then exit;
 
   // ...
@@ -125,7 +127,7 @@ var
 begin
   result := false;
 
-  ok := SelectedCount = 4;
+  ok := GetSelectedCount = 4;
   if not ok then exit;
 
   // ...
@@ -138,7 +140,7 @@ var
   ok: boolean;
 
 begin
-  ok := SelectedCount = 5;
+  ok := GetSelectedCount = 5;
   if not ok then exit;
 
   // ...
@@ -157,7 +159,7 @@ begin
   ok := AllSameSuit;
   if not ok then exit;
 
-  ok := SelectedCount = 5;
+  ok := GetSelectedCount = 5;
   if not ok then exit;
 
   // ...
@@ -172,7 +174,7 @@ var
 begin
   result := false;
 
-  ok := SelectedCount = 5;
+  ok := GetSelectedCount = 5;
   if not ok then exit;
 
   // ...
@@ -187,7 +189,7 @@ var
 begin
   result := false;
 
-  ok := SelectedCount = 3;
+  ok := GetSelectedCount = 3;
   if not ok then exit;
 
   // ...
@@ -203,7 +205,7 @@ var
 begin
   result := false;
 
-  ok := SelectedCount = 4;
+  ok := GetSelectedCount = 4;
   if not ok then exit;
 
   // ...
@@ -219,7 +221,7 @@ var
 begin
   result := false;
 
-  ok := SelectedCount = 2;
+  ok := GetSelectedCount = 2;
   if not ok then exit;
 
   // ...
@@ -235,7 +237,7 @@ var
 begin
   result := false;
 
-  ok := SelectedCount = 1;
+  ok := GetSelectedCount = 1;
   if not ok then exit;
 
   // ...
@@ -282,6 +284,11 @@ end;
 procedure THand.Sort;
 begin
   m_cards.Sort(@CompareCards);
+end;
+
+procedure THand.Remove(acard: TCard);
+begin
+  m_cards.Remove(acard);
 end;
 
 function THand.ApplyPokerRules: TPokerScore;

@@ -46,6 +46,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Shuffle;
+    procedure Add(acard: TCard);
     function Remove: TCard;
   end;
 
@@ -187,6 +188,11 @@ begin
 
     SwapCards(i, other);
   end;
+end;
+
+procedure TCards.Add(acard: TCard);
+begin
+  m_cards.Add(acard);
 end;
 
 function TCards.Remove: TCard;

@@ -15,6 +15,7 @@ type
   private
     m_cards: TCards;
     m_hand: THand;
+    procedure RefillHand;
   public
     constructor Create;
     destructor Destroy; override;
@@ -29,6 +30,20 @@ type
 implementation
 
 { TDeck }
+
+procedure TDeck.RefillHand;
+var
+  card: TCard;
+
+begin
+  while m_hand.Cards.Count < 7 do
+  begin
+    card := m_cards.Remove;
+    m_hand.Add(card);
+  end;
+
+  m_hand.Sort;
+end;
 
 constructor TDeck.Create;
 begin
@@ -66,7 +81,8 @@ begin
   if (index >= 0) and (index < m_hand.Cards.Count) then
   begin
     card := m_hand.Cards[index];
-    card.Selected := not card.Selected;
+    if ((card.Selected = false) and (m_hand.SelectedCount < 5)) or (card.Selected = true) then
+      card.Selected := not card.Selected;
   end;
 end;
 
@@ -85,8 +101,27 @@ begin
 end;
 
 procedure TDeck.DiscardHand;
-begin
+var
+  card: TCard;
+  toRemove: TCardList;
 
+begin
+  toRemove := TCardList.Create;
+  for card in m_hand.Cards do
+  begin
+    if card.Selected then
+    begin
+      toRemove.Add(card);
+      m_cards.Add(card);
+    end;
+  end;
+
+  for card in toRemove do
+    m_hand.Remove(card);
+
+  RefillHand;
+
+  toRemove.Free;
 end;
 
 end.

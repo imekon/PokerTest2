@@ -73,9 +73,9 @@ begin
   else if IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) then
     m_deck.ResetSelection;
 
-  if Button('Play Hand', LEFT_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 150, 30) then
+  if Button('Play Hand', LEFT_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
     m_deck.PlayHand
-  else if Button('Discard', LEFT_MARGIN + 200, TOP_MARGIN + CARD_HEIGHT + OFFSET, 150, 30) then
+  else if Button('Discard', LEFT_MARGIN + 200, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
     m_deck.DiscardHand;
 end;
 
@@ -102,20 +102,32 @@ function TGame.Button(const text: string; x, y, w, h: integer): boolean;
 var
   point: TVector2;
   bounds: TRectangle;
+  over: boolean;
 
 begin
   result := false;
-  DrawText(PChar(text), x, y, 30, WHITE);
-  if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) then
+
+  bounds.x := x;
+  bounds.y := y;
+  bounds.width := w;
+  bounds.height := h;
+  point := GetMousePosition;
+  over := CheckCollisionPointRec(point, bounds);
+
+  if over then
   begin
-    bounds.x := x;
-    bounds.y := y;
-    bounds.width := w;
-    bounds.height := h;
-    point := GetMousePosition;
-    if CheckCollisionPointRec(point, bounds) then
-      result := true;
+    DrawRectangle(x, y, w, h, LIGHTGRAY);
+    DrawText(PChar(text), x + 3, y + 3, 30, BLACK);
+  end
+  else
+  begin
+    DrawRectangle(x, y, w, h, DARKGRAY);
+    DrawText(PChar(text), x + 3, y + 3, 30, WHITE);
   end;
+
+
+  if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) and over then
+    result := true;
 end;
 
 end.
