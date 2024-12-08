@@ -5,7 +5,7 @@ unit deckitem;
 interface
 
 uses
-  Classes, SysUtils, carditem, handitem;
+  Classes, SysUtils, carditem, handitem, rulesitem;
 
 type
 
@@ -96,8 +96,36 @@ begin
 end;
 
 procedure TDeck.PlayHand;
-begin
+var
+  card: TCard;
+  playList: TCardList;
+  rules: TRules;
+  score: TPokerScore;
 
+begin
+  playList := TCardList.Create;
+
+  for card in m_hand.Cards do
+  begin
+    if card.Selected then
+    begin
+      playList.Add(card);
+      m_cards.Add(card);
+    end;
+  end;
+
+  for card in playList do
+    m_hand.Remove(card);
+
+  rules := TRules.Create(playList);
+  score := rules.Apply;
+  rules.Free;
+
+  // TODO: process score
+
+  RefillHand;
+
+  playList.Free;
 end;
 
 procedure TDeck.DiscardHand;
