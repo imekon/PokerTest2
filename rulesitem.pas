@@ -9,6 +9,11 @@ uses
 
 type
 
+  TCardBucket = record
+    Count: integer;
+    Index: TCardIndex;
+  end;
+
   { TRules }
 
   TRules = class
@@ -17,6 +22,8 @@ type
 
     function AllSameSuit: boolean;
     function IsRoyal: boolean;
+    function IsInline: boolean;
+
     function IsRoyalFlush: boolean;
     function IsStraightFlush: boolean;
     function IsFourKind: boolean;
@@ -84,6 +91,27 @@ begin
   result := true;
 end;
 
+function TRules.IsInline: boolean;
+var
+  card: TCard;
+  index: TCardIndex;
+
+begin
+  result := false;
+
+  index := 0; // ACE, which isn't legal for this (legal for Royal)
+
+  for card in m_cards do
+  begin
+    if index = 0 then
+      index := card.CardIndex
+    else
+      if index <> card.CardIndex then exit;
+
+    dec(index);
+  end
+end;
+
 function TRules.IsRoyalFlush: boolean;
 var
   ok: boolean;
@@ -113,7 +141,8 @@ begin
   ok := m_cards.Count = 5;
   if not ok then exit;
 
-  // ...
+  ok := IsInline;
+  if not ok then exit;
 
   result := true;
 end;
@@ -121,14 +150,46 @@ end;
 function TRules.IsFourKind: boolean;
 var
   ok: boolean;
+  buckets: array [1..2] of TCardBucket;
+  card: TCard;
 
 begin
   result := false;
 
-  ok := m_cards.Count = 4;
+  ok := m_cards.Count >= 4;
   if not ok then exit;
 
-  // ...
+  buckets[1].Count := 0;
+  buckets[1].Index := 0;
+
+  buckets[2].Count := 0;
+  buckets[2].Index := 0;
+
+  for card in m_cards do
+  begin
+    if (buckets[1].Count = 0) and (buckets[2].Count = 0) then
+    begin
+      buckets[1].Count := 1;
+      buckets[1].Index := card.CardIndex;
+      continue;
+    end;
+
+    if (buckets[1].Index = card.CardIndex) and (buckets[1].Count > 0) then
+    begin
+      inc(buckets[1].Count);
+      continue;
+    end;
+
+    if (buckets[2].Index = card.CardIndex) and (buckets[2].Count > 0) then
+    begin
+      inc(buckets[2].Count);
+      continue;
+    end;
+
+    exit;
+  end;
+
+  if (buckets[1].Count <> 4) and (buckets[2].Count <> 4) then exit;
 
   result := true;
 end;
