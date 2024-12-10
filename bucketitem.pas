@@ -9,7 +9,7 @@ uses
 
 type
   TCardBucket = record
-    Count: integer;
+    Cards: TCardList;
     Index: TCardIndex;
   end;
 
@@ -28,72 +28,72 @@ var
   cardBuckets: TCardBucketResult;
 
 begin
-  cardBuckets.buckets[1].Count := 0;
+  cardBuckets.buckets[1].Cards := TCardList.Create;
   cardBuckets.buckets[1].Index := 0;
 
-  cardBuckets.buckets[2].Count := 0;
+  cardBuckets.buckets[2].Cards := TCardList.Create;
   cardBuckets.buckets[2].Index := 0;
 
-  cardBuckets.buckets[3].Count := 0;
+  cardBuckets.buckets[3].Cards := TCardList.Create;
   cardBuckets.buckets[3].Index := 0;
 
-  cardBuckets.buckets[4].Count := 0;
+  cardBuckets.buckets[4].Cards := TCardList.Create;
   cardBuckets.buckets[4].Index := 0;
 
   for card in list do
   begin
-    if (cardBuckets.buckets[1].Count = 0) and
-       (cardBuckets.buckets[2].Count = 0) then
+    if (cardBuckets.buckets[1].Cards.Count = 0) and
+       (cardBuckets.buckets[2].Cards.Count = 0) then
     begin
-      cardBuckets.buckets[1].Count := 1;
+      cardBuckets.buckets[1].Cards.Add(card);
       cardBuckets.buckets[1].Index := card.CardIndex;
       continue;
     end;
 
     if (cardBuckets.buckets[1].Index = card.CardIndex) and
-       (cardBuckets.buckets[1].Count > 0) then
+       (cardBuckets.buckets[1].Cards.Count > 0) then
     begin
-      inc(cardBuckets.buckets[1].Count);
+      cardBuckets.buckets[1].Cards.Add(card);
       continue;
     end;
 
-    if (cardBuckets.buckets[2].Count = 0) then
+    if (cardBuckets.buckets[2].Cards.Count = 0) then
     begin
-      cardBuckets.buckets[2].Count := 1;
+      cardBuckets.buckets[2].Cards.Add(card);
       cardBuckets.buckets[2].Index := card.CardIndex;
       continue;
     end;
 
     if (cardBuckets.buckets[2].Index = card.CardIndex) and
-       (cardBuckets.buckets[2].Count > 0) then
+       (cardBuckets.buckets[2].Cards.Count > 0) then
     begin
-      inc(cardBuckets.buckets[2].Count);
+      cardBuckets.buckets[2].Cards.Add(card);
       continue;
     end;
 
-    if (cardBuckets.buckets[3].Count = 0) then
+    if (cardBuckets.buckets[3].Cards.Count = 0) then
     begin
-      cardBuckets.Buckets[3].Count := 1;
+      cardBuckets.Buckets[3].Cards.Add(card);
       cardBuckets.Buckets[3].Index := card.CardIndex;
       continue;
     end;
 
     if (cardBuckets.buckets[3].Index = card.CardIndex) then
     begin
-      inc(cardBuckets.Buckets[3].Count);
+      cardBuckets.Buckets[3].Cards.Add(card);
       continue;
     end;
 
-    if (cardBuckets.buckets[4].Count = 0) then
+    if (cardBuckets.buckets[4].Cards.Count = 0) then
     begin
-      cardBuckets.Buckets[4].Count := 1;
+      cardBuckets.Buckets[4].Cards.Add(card);
       cardBuckets.Buckets[4].Index := card.CardIndex;
       continue;
     end;
 
     if (cardBuckets.buckets[4].Index = card.CardIndex) then
     begin
-      inc(cardBuckets.Buckets[4].Count);
+      cardBuckets.Buckets[4].Cards.Add(card);
       continue;
     end;
 

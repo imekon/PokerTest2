@@ -15,6 +15,8 @@ type
   private
     m_cards: TCardList;
 
+    procedure ClearScoring;
+
     function AllSameSuit: boolean;
     function IsRoyal: boolean;
     function IsInline: boolean;
@@ -41,6 +43,15 @@ implementation
 constructor TRules.Create(list: TCardList);
 begin
   m_cards := list;
+end;
+
+procedure TRules.ClearScoring;
+var
+  card: TCard;
+
+begin
+  for card in m_cards do
+    card.Scoring := false;
 end;
 
 function TRules.AllSameSuit: boolean;
@@ -110,6 +121,7 @@ end;
 function TRules.IsRoyalFlush: boolean;
 var
   ok: boolean;
+  card: TCard;
 
 begin
   result := false;
@@ -120,12 +132,16 @@ begin
   ok := IsRoyal;
   if not ok then exit;
 
+  for card in m_cards do
+    card.Scoring := true;
+
   result := true;
 end;
 
 function TRules.IsStraightFlush: boolean;
 var
   ok: boolean;
+  card: TCard;
 
 begin
   result := false;
@@ -139,6 +155,9 @@ begin
   ok := IsInline;
   if not ok then exit;
 
+  for card in m_cards do
+    card.Scoring := true;
+
   result := true;
 end;
 
@@ -146,6 +165,7 @@ function TRules.IsFourKind: boolean;
 var
   ok: boolean;
   cardBuckets: TCardBucketResult;
+  card: TCard;
 
 begin
   result := false;
@@ -157,15 +177,28 @@ begin
 
   if not cardBuckets.Passed then exit;
 
-  if (cardBuckets.buckets[1].Count = 4) or
-     (CardBuckets.buckets[2].Count = 4) then
-     result := true;
+  if (cardBuckets.buckets[1].Cards.Count = 4) then
+  begin
+    for card in cardBuckets.buckets[1].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
+
+  if (CardBuckets.buckets[2].Cards.Count = 4) then
+  begin
+    for card in cardBuckets.buckets[2].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
 end;
 
 function TRules.IsFullHouse: boolean;
 var
   ok: boolean;
   cardBuckets: TCardBucketResult;
+  card: TCard;
 
 begin
   result := false;
@@ -176,16 +209,22 @@ begin
 
   if not cardBuckets.Passed then exit;
 
-  if ((cardBuckets.buckets[1].Count = 3) and
-     (cardBuckets.buckets[2].Count = 2)) or
-     ((cardBuckets.buckets[1].Count = 2) and
-     (cardBuckets.buckets[2].Count = 3)) then
-     result := true;
+  if ((cardBuckets.buckets[1].Cards.Count = 3) and
+     (cardBuckets.buckets[2].Cards.Count = 2)) or
+     ((cardBuckets.buckets[1].Cards.Count = 2) and
+     (cardBuckets.buckets[2].Cards.Count = 3)) then
+  begin
+    for card in m_cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
 end;
 
 function TRules.IsFlush: boolean;
 var
   ok: boolean;
+  card: TCard;
 
 begin
   result := false;
@@ -196,12 +235,16 @@ begin
   ok := m_cards.Count = 5;
   if not ok then exit;
 
+  for card in m_cards do
+    card.Scoring := true;
+
   result := true;
 end;
 
 function TRules.IsStraight: boolean;
 var
   ok: boolean;
+  card: TCard;
 
 begin
   result := false;
@@ -212,6 +255,9 @@ begin
   ok := IsInline;
   if not ok then exit;
 
+  for card in m_cards do
+    card.Scoring := true;
+
   result := true;
 end;
 
@@ -219,6 +265,7 @@ function TRules.IsThreeKind: boolean;
 var
   ok: boolean;
   cardBuckets: TCardBucketResult;
+  card: TCard;
 
 begin
   result := false;
@@ -229,16 +276,36 @@ begin
   cardBuckets := ProcessCards(m_cards);
   if not cardBuckets.Passed then exit;
 
-  if (cardBuckets.buckets[1].Count = 3) or
-     (cardBuckets.buckets[2].Count = 3) or
-     (cardBuckets.buckets[3].Count = 3) then
-     result := true;
+  if (cardBuckets.buckets[1].Cards.Count = 3) then
+  begin
+    for card in cardBuckets.buckets[1].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
+
+  if (cardBuckets.buckets[2].Cards.Count = 3) then
+  begin
+    for card in cardBuckets.buckets[2].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
+
+  if (cardBuckets.buckets[3].Cards.Count = 3) then
+  begin
+    for card in cardBuckets.buckets[3].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
 end;
 
 function TRules.IsTwoPair: boolean;
 var
   ok: boolean;
   cardBuckets: TCardBucketResult;
+  card: TCard;
 
 begin
   result := false;
@@ -249,19 +316,48 @@ begin
   cardBuckets := ProcessCards(m_cards);
   if not cardBuckets.Passed then exit;
 
-  if ((cardBuckets.buckets[1].Count = 2) and
-     (cardBuckets.buckets[2].Count = 2)) or
-     ((cardBuckets.buckets[1].Count = 2) and
-     (cardBuckets.buckets[3].Count = 2)) or
-     ((cardBuckets.buckets[2].Count = 2) and
-     (cardBuckets.buckets[3].Count = 2)) then
-     result := true;
+  if ((cardBuckets.buckets[1].Cards.Count = 2) and
+     (cardBuckets.buckets[2].Cards.Count = 2)) then
+  begin
+    for card in cardBuckets.buckets[1].Cards do
+      card.Scoring := true;
+
+    for card in cardBuckets.buckets[2].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
+
+  if ((cardBuckets.buckets[1].Cards.Count = 2) and
+     (cardBuckets.buckets[3].Cards.Count = 2)) then
+  begin
+    for card in cardBuckets.buckets[1].Cards do
+      card.Scoring := true;
+
+    for card in cardBuckets.buckets[3].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
+
+  if ((cardBuckets.buckets[2].Cards.Count = 2) and
+     (cardBuckets.buckets[3].Cards.Count = 2)) then
+  begin
+    for card in cardBuckets.buckets[2].Cards do
+      card.Scoring := true;
+
+    for card in cardBuckets.buckets[3].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
 end;
 
 function TRules.IsPair: boolean;
 var
   ok: boolean;
   cardBuckets: TCardBucketResult;
+  card: TCard;
 
 begin
   result := false;
@@ -272,23 +368,49 @@ begin
   cardBuckets := ProcessCards(m_cards);
   if not cardBuckets.Passed then exit;
 
-  if ((cardBuckets.buckets[1].Count = 2) and
-     (cardBuckets.buckets[2].Count = 1) and
-     (cardBuckets.buckets[3].Count = 1) and
-     (cardBuckets.buckets[4].Count = 1)) or
-     ((cardBuckets.buckets[1].Count = 1) and
-     (cardBuckets.buckets[2].Count = 2) and
-     (cardBuckets.buckets[3].Count = 1) and
-     (cardBuckets.buckets[4].Count = 1)) or
-     ((cardBuckets.buckets[1].Count = 1) and
-     (cardBuckets.buckets[2].Count = 1) and
-     (cardBuckets.buckets[3].Count = 2) and
-     (cardBuckets.buckets[4].Count = 1)) or
-     ((cardBuckets.buckets[1].Count = 1) and
-     (cardBuckets.buckets[2].Count = 1) and
-     (cardBuckets.buckets[3].Count = 1) and
-     (cardBuckets.buckets[4].Count = 2)) then
-     result := true;
+  if ((cardBuckets.buckets[1].Cards.Count = 2) and
+     (cardBuckets.buckets[2].Cards.Count = 1) and
+     (cardBuckets.buckets[3].Cards.Count = 1) and
+     (cardBuckets.buckets[4].Cards.Count = 1)) then
+  begin
+    for card in cardBuckets.buckets[1].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
+
+  if ((cardBuckets.buckets[1].Cards.Count = 1) and
+     (cardBuckets.buckets[2].Cards.Count = 2) and
+     (cardBuckets.buckets[3].Cards.Count = 1) and
+     (cardBuckets.buckets[4].Cards.Count = 1)) then
+  begin
+    for card in cardBuckets.buckets[2].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
+
+  if ((cardBuckets.buckets[1].Cards.Count = 1) and
+     (cardBuckets.buckets[2].Cards.Count = 1) and
+     (cardBuckets.buckets[3].Cards.Count = 2) and
+     (cardBuckets.buckets[4].Cards.Count = 1)) then
+  begin
+    for card in cardBuckets.buckets[3].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
+
+  if ((cardBuckets.buckets[1].Cards.Count = 1) and
+     (cardBuckets.buckets[2].Cards.Count = 1) and
+     (cardBuckets.buckets[3].Cards.Count = 1) and
+     (cardBuckets.buckets[4].Cards.Count = 2)) then
+  begin
+    for card in cardBuckets.buckets[4].Cards do
+      card.Scoring := true;
+
+    result := true;
+  end;
 end;
 
 function TRules.IsHighCard: boolean;
@@ -301,11 +423,15 @@ begin
   ok := m_cards.Count >= 1;
   if not ok then exit;
 
+  m_cards[0].Scoring := true;
+
   result := true;
 end;
 
 function TRules.Apply: TPokerScore;
 begin
+  ClearScoring;
+
   if IsRoyalFlush then
     result := ROYAL_FLUSH
   else if IsStraightFlush then

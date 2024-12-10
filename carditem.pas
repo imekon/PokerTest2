@@ -21,6 +21,7 @@ type
     m_suit: TSuit;
     m_card: TCardIndex;
     m_selected: boolean;
+    m_scoring: boolean;
     function GetCardOrder: integer;
   public
     constructor Create(asuit: TSuit; acard: TCardIndex; atexture: TTexture2D);
@@ -29,6 +30,7 @@ type
     property CardIndex: TCardIndex read m_card;
     property CardOrder: integer read GetCardOrder;
     property Selected: boolean read m_selected write m_selected;
+    property Scoring: boolean read m_scoring write m_scoring;
     property Texture: TTexture2D read m_texture;
   end;
 
@@ -68,6 +70,7 @@ begin
   m_suit := asuit;
   m_card := acard;
   m_selected := false;
+  m_scoring := false;
 end;
 
 destructor TCard.Destroy;
