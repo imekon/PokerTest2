@@ -13,96 +13,127 @@ type
     Index: TCardIndex;
   end;
 
-  TCardBucketResult = record
+  { TCardBucketResult }
+
+  TCardBucketResult = class
+  public
     Buckets: array [1..4] of TCardBucket;
     Passed: boolean;
-  end;
 
-  function ProcessCards(list: TCardList): TCardBucketResult;
+    constructor Create;
+    destructor Destroy; override;
+    procedure ProcessCards(list: TCardList);
+  end;
 
 implementation
 
-function ProcessCards(list: TCardList): TCardBucketResult;
+procedure TCardBucketResult.ProcessCards(list: TCardList);
 var
   card: TCard;
-  cardBuckets: TCardBucketResult;
 
 begin
-  cardBuckets.buckets[1].Cards := TCardList.Create;
-  cardBuckets.buckets[1].Index := 0;
+  buckets[1].Cards := TCardList.Create;
+  buckets[1].Index := 0;
 
-  cardBuckets.buckets[2].Cards := TCardList.Create;
-  cardBuckets.buckets[2].Index := 0;
+  buckets[2].Cards := TCardList.Create;
+  buckets[2].Index := 0;
 
-  cardBuckets.buckets[3].Cards := TCardList.Create;
-  cardBuckets.buckets[3].Index := 0;
+  buckets[3].Cards := TCardList.Create;
+  buckets[3].Index := 0;
 
-  cardBuckets.buckets[4].Cards := TCardList.Create;
-  cardBuckets.buckets[4].Index := 0;
+  buckets[4].Cards := TCardList.Create;
+  buckets[4].Index := 0;
 
   for card in list do
   begin
-    if (cardBuckets.buckets[1].Cards.Count = 0) and
-       (cardBuckets.buckets[2].Cards.Count = 0) then
+    if (buckets[1].Cards.Count = 0) and
+       (buckets[2].Cards.Count = 0) then
     begin
-      cardBuckets.buckets[1].Cards.Add(card);
-      cardBuckets.buckets[1].Index := card.CardIndex;
+      buckets[1].Cards.Add(card);
+      buckets[1].Index := card.CardIndex;
       continue;
     end;
 
-    if (cardBuckets.buckets[1].Index = card.CardIndex) and
-       (cardBuckets.buckets[1].Cards.Count > 0) then
+    if (buckets[1].Index = card.CardIndex) and
+       (buckets[1].Cards.Count > 0) then
     begin
-      cardBuckets.buckets[1].Cards.Add(card);
+      buckets[1].Cards.Add(card);
       continue;
     end;
 
-    if (cardBuckets.buckets[2].Cards.Count = 0) then
+    if (buckets[2].Cards.Count = 0) then
     begin
-      cardBuckets.buckets[2].Cards.Add(card);
-      cardBuckets.buckets[2].Index := card.CardIndex;
+      buckets[2].Cards.Add(card);
+      buckets[2].Index := card.CardIndex;
       continue;
     end;
 
-    if (cardBuckets.buckets[2].Index = card.CardIndex) and
-       (cardBuckets.buckets[2].Cards.Count > 0) then
+    if (buckets[2].Index = card.CardIndex) and
+       (buckets[2].Cards.Count > 0) then
     begin
-      cardBuckets.buckets[2].Cards.Add(card);
+      buckets[2].Cards.Add(card);
       continue;
     end;
 
-    if (cardBuckets.buckets[3].Cards.Count = 0) then
+    if (buckets[3].Cards.Count = 0) then
     begin
-      cardBuckets.Buckets[3].Cards.Add(card);
-      cardBuckets.Buckets[3].Index := card.CardIndex;
+      Buckets[3].Cards.Add(card);
+      Buckets[3].Index := card.CardIndex;
       continue;
     end;
 
-    if (cardBuckets.buckets[3].Index = card.CardIndex) then
+    if (buckets[3].Index = card.CardIndex) then
     begin
-      cardBuckets.Buckets[3].Cards.Add(card);
+      Buckets[3].Cards.Add(card);
       continue;
     end;
 
-    if (cardBuckets.buckets[4].Cards.Count = 0) then
+    if (buckets[4].Cards.Count = 0) then
     begin
-      cardBuckets.Buckets[4].Cards.Add(card);
-      cardBuckets.Buckets[4].Index := card.CardIndex;
+      Buckets[4].Cards.Add(card);
+      Buckets[4].Index := card.CardIndex;
       continue;
     end;
 
-    if (cardBuckets.buckets[4].Index = card.CardIndex) then
+    if (buckets[4].Index = card.CardIndex) then
     begin
-      cardBuckets.Buckets[4].Cards.Add(card);
+      Buckets[4].Cards.Add(card);
       continue;
     end;
 
-    cardBuckets.Passed := false;
+    Passed := false;
     exit;
   end;
 
-  cardBuckets.Passed := true;
-  result := cardBuckets;
+  Passed := true;
+end;
+
+{ TCardBucketResult }
+
+constructor TCardBucketResult.Create;
+begin
+  buckets[1].Cards := TCardList.Create;
+  buckets[1].Index := 0;
+
+  buckets[2].Cards := TCardList.Create;
+  buckets[2].Index := 0;
+
+  buckets[3].Cards := TCardList.Create;
+  buckets[3].Index := 0;
+
+  buckets[4].Cards := TCardList.Create;
+  buckets[4].Index := 0;
+end;
+
+destructor TCardBucketResult.Destroy;
+var
+  i: integer;
+
+begin
+  for i := 1 to 4 do
+    buckets[i].Cards.Free;
+
+  inherited Destroy;
 end;
 
 end.

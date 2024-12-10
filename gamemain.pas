@@ -96,6 +96,9 @@ begin
 
     inc(x, CARD_WIDTH);
   end;
+
+  DrawText(PChar('Total: ' + IntToStr(m_deck.Total)), 20, 20, 30, WHITE);
+  DrawText(PChar('Credits: ' + IntToStr(m_deck.Credits)), 20, 50, 30, WHITE);
 end;
 
 function TGame.Button(const text: string; x, y, w, h: integer): boolean;

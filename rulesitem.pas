@@ -34,11 +34,16 @@ type
   public
     constructor Create(list: TCardList);
     function Apply: TPokerScore;
+    function Score: integer;
   end;
 
 implementation
 
 { TRules }
+
+const
+  CardScoring: array [TCardIndex] of integer =
+    (20, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10);
 
 constructor TRules.Create(list: TCardList);
 begin
@@ -173,7 +178,8 @@ begin
   ok := m_cards.Count >= 4;
   if not ok then exit;
 
-  cardBuckets := ProcessCards(m_cards);
+  cardBuckets := TCardBucketResult.Create;
+  cardBuckets.ProcessCards(m_cards);
 
   if not cardBuckets.Passed then exit;
 
@@ -192,6 +198,8 @@ begin
 
     result := true;
   end;
+
+  cardBuckets.Free;
 end;
 
 function TRules.IsFullHouse: boolean;
@@ -205,7 +213,8 @@ begin
   ok := m_cards.Count = 5;
   if not ok then exit;
 
-  cardBuckets := ProcessCards(m_cards);
+  cardBuckets := TCardBucketResult.Create;
+  cardBuckets.ProcessCards(m_cards);
 
   if not cardBuckets.Passed then exit;
 
@@ -219,6 +228,8 @@ begin
 
     result := true;
   end;
+
+  cardBuckets.Free;
 end;
 
 function TRules.IsFlush: boolean;
@@ -273,7 +284,8 @@ begin
   ok := m_cards.Count >= 3;
   if not ok then exit;
 
-  cardBuckets := ProcessCards(m_cards);
+  cardBuckets := TCardBucketResult.Create;
+  cardBuckets.ProcessCards(m_cards);
   if not cardBuckets.Passed then exit;
 
   if (cardBuckets.buckets[1].Cards.Count = 3) then
@@ -299,6 +311,7 @@ begin
 
     result := true;
   end;
+  cardBuckets.Free;
 end;
 
 function TRules.IsTwoPair: boolean;
@@ -313,7 +326,8 @@ begin
   ok := m_cards.Count >= 4;
   if not ok then exit;
 
-  cardBuckets := ProcessCards(m_cards);
+  cardBuckets := TCardBucketResult.Create;
+  cardBuckets.ProcessCards(m_cards);
   if not cardBuckets.Passed then exit;
 
   if ((cardBuckets.buckets[1].Cards.Count = 2) and
@@ -351,6 +365,7 @@ begin
 
     result := true;
   end;
+  cardBuckets.Free;
 end;
 
 function TRules.IsPair: boolean;
@@ -365,7 +380,8 @@ begin
   ok := m_cards.Count >= 2;
   if not ok then exit;
 
-  cardBuckets := ProcessCards(m_cards);
+  cardBuckets := TCardBucketResult.Create;
+  cardBuckets.ProcessCards(m_cards);
   if not cardBuckets.Passed then exit;
 
   if ((cardBuckets.buckets[1].Cards.Count = 2) and
@@ -411,6 +427,7 @@ begin
 
     result := true;
   end;
+  cardBuckets.Free;
 end;
 
 function TRules.IsHighCard: boolean;
@@ -454,6 +471,24 @@ begin
     result := HIGH_CARD
   else
     result := NO_SCORE;
+end;
+
+function TRules.Score: integer;
+var
+  card: TCard;
+  total: integer;
+
+begin
+  total := 0;
+  for card in m_cards do
+  begin
+    if card.Scoring then
+    begin
+      total := total + CardScoring[card.CardIndex];
+    end;
+  end;
+
+  result := total;
 end;
 
 end.

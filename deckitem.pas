@@ -15,6 +15,8 @@ type
   private
     m_cards: TCards;
     m_hand: THand;
+    m_total: integer;
+    m_credits: integer;
     procedure RefillHand;
   public
     constructor Create;
@@ -25,6 +27,8 @@ type
     procedure PlayHand;
     procedure DiscardHand;
     property Hand: THand read m_hand;
+    property Total: integer read m_total;
+    property Credits: integer read m_credits;
   end;
 
 implementation
@@ -119,9 +123,9 @@ begin
 
   rules := TRules.Create(playList);
   score := rules.Apply;
+  m_credits := rules.Score;
+  m_total := m_total + m_credits;
   rules.Free;
-
-  // TODO: process score
 
   RefillHand;
 

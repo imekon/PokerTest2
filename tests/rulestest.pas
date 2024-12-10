@@ -44,9 +44,11 @@ end;
 
 procedure PokerRulesTest.RoyalFlushScore;
 var
+  card: TCard;
   list: TCardList;
   rules: TRules;
   score: TPokerScore;
+  total: integer;
   texture: TTexture2D;
 
 begin
@@ -60,8 +62,12 @@ begin
   list.Add(TCard.Create(SUIT_SPADES, 9, texture));
   rules := TRules.Create(list);
   score := rules.Apply;
+  total := rules.Score;
   rules.Free;
   AssertTrue('Royal Flush Spades', score = ROYAL_FLUSH);
+  AssertTrue('Royal Flush score', total = 20 + 10 + 10 + 10 + 10);
+  for card in list do
+    AssertTrue('Scoring', card.Scoring);
 
   list.Clear;
   list.Add(TCard.Create(SUIT_CLUBS, 0, texture));
@@ -73,6 +79,8 @@ begin
   score := rules.Apply;
   rules.Free;
   AssertTrue('Royal Flush Clubs', score = ROYAL_FLUSH);
+  for card in list do
+    AssertTrue('Scoring', card.Scoring);
 
   list.Clear;
   list.Add(TCard.Create(SUIT_HEARTS, 0, texture));
@@ -84,6 +92,8 @@ begin
   score := rules.Apply;
   rules.Free;
   AssertTrue('Royal Flush Hearts', score = ROYAL_FLUSH);
+  for card in list do
+    AssertTrue('Scoring', card.Scoring);
 
   list.Clear;
   list.Add(TCard.Create(SUIT_DIAMONDS, 0, texture));
@@ -95,6 +105,8 @@ begin
   score := rules.Apply;
   rules.Free;
   AssertTrue('Royal Flush Clubs', score = ROYAL_FLUSH);
+  for card in list do
+    AssertTrue('Scoring', card.Scoring);
 
   list.Clear;
   list.Add(TCard.Create(SUIT_CLUBS, 0, texture));
@@ -123,6 +135,7 @@ end;
 
 procedure PokerRulesTest.StraightFlushScore;
 var
+  card: TCard;
   list: TCardList;
   rules: TRules;
   score: TPokerScore;
@@ -141,6 +154,8 @@ begin
   score := rules.Apply;
   rules.Free;
   AssertTrue('Straight Flush Spades', score = STRAIGHT_FLUSH);
+  for card in list do
+    AssertTrue('Scoring', card.Scoring);
 
   list.Free;
 end;
@@ -333,7 +348,7 @@ begin
   score := rules.Apply;
   rules.Free;
   AssertTrue('High', score = HIGH_CARD);
-
+  AssertTrue('Scoring', list[0].Scoring);
   list.Free;
 end;
 
