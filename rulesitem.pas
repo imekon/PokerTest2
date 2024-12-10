@@ -296,7 +296,7 @@ var
 begin
   result := false;
 
-  ok := m_cards.Count = 1;
+  ok := m_cards.Count >= 1;
   if not ok then exit;
 
   // ...
@@ -325,8 +325,10 @@ begin
     result := TWO_PAIR
   else if IsPair then
     result := PAIR
+  else if IsHighCard then
+    result := HIGH_CARD
   else
-    result := HIGH_CARD;
+    result := NO_SCORE;
 end;
 
 end.

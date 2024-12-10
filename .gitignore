@@ -3,3 +3,6 @@ lib/
 pokertest.exe
 pokertest.lps
 pokertest
+unittests.exe
+unittests.lps
+unittests
