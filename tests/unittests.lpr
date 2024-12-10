@@ -3,7 +3,7 @@ program unittests;
 {$mode objfpc}{$H+}
 
 uses
-  Interfaces, Forms, GuiTestRunner, rulestest, rulesitem;
+  Interfaces, Forms, GuiTestRunner, rulestest, rulesitem, bucketitem;
 
 {$R *.res}
 
