@@ -16,6 +16,8 @@ const
 var
   game: TGame;
 
+{$R *.res}
+
 begin
   // Initialization
   Randomize;
