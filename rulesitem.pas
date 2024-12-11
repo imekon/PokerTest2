@@ -35,6 +35,7 @@ type
     constructor Create(list: TCardList);
     function Apply: TPokerScore;
     function Score: integer;
+    function ScoreDescription(ascore: TPokerScore): string;
   end;
 
 implementation
@@ -385,9 +386,9 @@ begin
   if not cardBuckets.Passed then exit;
 
   if ((cardBuckets.buckets[1].Cards.Count = 2) and
-     (cardBuckets.buckets[2].Cards.Count = 1) and
-     (cardBuckets.buckets[3].Cards.Count = 1) and
-     (cardBuckets.buckets[4].Cards.Count = 1)) then
+     (cardBuckets.buckets[2].Cards.Count <= 1) and
+     (cardBuckets.buckets[3].Cards.Count <= 1) and
+     (cardBuckets.buckets[4].Cards.Count <= 1)) then
   begin
     for card in cardBuckets.buckets[1].Cards do
       card.Scoring := true;
@@ -395,10 +396,10 @@ begin
     result := true;
   end;
 
-  if ((cardBuckets.buckets[1].Cards.Count = 1) and
+  if ((cardBuckets.buckets[1].Cards.Count <= 1) and
      (cardBuckets.buckets[2].Cards.Count = 2) and
-     (cardBuckets.buckets[3].Cards.Count = 1) and
-     (cardBuckets.buckets[4].Cards.Count = 1)) then
+     (cardBuckets.buckets[3].Cards.Count <= 1) and
+     (cardBuckets.buckets[4].Cards.Count <= 1)) then
   begin
     for card in cardBuckets.buckets[2].Cards do
       card.Scoring := true;
@@ -406,10 +407,10 @@ begin
     result := true;
   end;
 
-  if ((cardBuckets.buckets[1].Cards.Count = 1) and
-     (cardBuckets.buckets[2].Cards.Count = 1) and
+  if ((cardBuckets.buckets[1].Cards.Count <= 1) and
+     (cardBuckets.buckets[2].Cards.Count <= 1) and
      (cardBuckets.buckets[3].Cards.Count = 2) and
-     (cardBuckets.buckets[4].Cards.Count = 1)) then
+     (cardBuckets.buckets[4].Cards.Count <= 1)) then
   begin
     for card in cardBuckets.buckets[3].Cards do
       card.Scoring := true;
@@ -417,9 +418,9 @@ begin
     result := true;
   end;
 
-  if ((cardBuckets.buckets[1].Cards.Count = 1) and
-     (cardBuckets.buckets[2].Cards.Count = 1) and
-     (cardBuckets.buckets[3].Cards.Count = 1) and
+  if ((cardBuckets.buckets[1].Cards.Count <= 1) and
+     (cardBuckets.buckets[2].Cards.Count <= 1) and
+     (cardBuckets.buckets[3].Cards.Count <= 1) and
      (cardBuckets.buckets[4].Cards.Count = 2)) then
   begin
     for card in cardBuckets.buckets[4].Cards do
@@ -489,6 +490,22 @@ begin
   end;
 
   result := total;
+end;
+
+function TRules.ScoreDescription(ascore: TPokerScore): string;
+begin
+  case ascore of
+    ROYAL_FLUSH: result := 'Royal Flush';
+    STRAIGHT_FLUSH: result := 'Straight Flush';
+    FOUR_OF_A_KIND: result := 'Four of a Kind';
+    FULL_HOUSE: result := 'Full House';
+    FLUSH: result := 'Flush';
+    STRAIGHT: result := 'Straight';
+    THREE_OF_A_KIND: result := 'Three of a Kind';
+    TWO_PAIRS: result := 'Two Pairs';
+    PAIR: result := 'Pair';
+    HIGH_CARD: result := 'High Card';
+  end;
 end;
 
 end.

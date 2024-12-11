@@ -42,6 +42,7 @@ type
   private
     m_cards: TCardList;
     function CreateCard(asuit: TSuit; acard: TCardIndex; const filename: string): TCard;
+    function GetCardCount: integer;
     procedure LoadCards;
     procedure SwapCards(a, b: integer);
   public
@@ -50,6 +51,7 @@ type
     procedure Shuffle;
     procedure Add(acard: TCard);
     function Remove: TCard;
+    property Count: integer read GetCardCount;
   end;
 
 implementation
@@ -90,6 +92,11 @@ begin
   texture := LoadTexture(PChar(filename));
   card := TCard.Create(asuit, acard, texture);
   result := card;
+end;
+
+function TCards.GetCardCount: integer;
+begin
+  result := m_cards.Count;
 end;
 
 procedure TCards.LoadCards;
@@ -203,6 +210,12 @@ var
   card: TCard;
 
 begin
+  if m_cards.Count = 0 then
+  begin
+    result := nil;
+    exit;
+  end;
+
   card := m_cards[0];
   m_cards.Remove(card);
   result := card;

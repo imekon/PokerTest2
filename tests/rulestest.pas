@@ -325,6 +325,14 @@ begin
   rules.Free;
   AssertTrue('Pair', score = PAIR);
 
+  list.Clear;
+  list.Add(TCard.Create(SUIT_SPADES, 8, texture));
+  list.Add(TCard.Create(SUIT_HEARTS, 8, texture));
+  rules := TRules.Create(list);
+  score := rules.Apply;
+  rules.Free;
+  AssertTrue('Pair', score = PAIR);
+
   list.Free;
 end;
 

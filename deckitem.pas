@@ -17,6 +17,8 @@ type
     m_hand: THand;
     m_total: integer;
     m_credits: integer;
+    m_description: string;
+    function GetRemainingCards: integer;
     procedure RefillHand;
   public
     constructor Create;
@@ -27,8 +29,10 @@ type
     procedure PlayHand;
     procedure DiscardHand;
     property Hand: THand read m_hand;
+    property Remaining: integer read GetRemainingCards;
     property Total: integer read m_total;
     property Credits: integer read m_credits;
+    property Description: string read m_description;
   end;
 
 implementation
@@ -43,10 +47,16 @@ begin
   while m_hand.Cards.Count < 7 do
   begin
     card := m_cards.Remove;
+    if card = nil then break;
     m_hand.Add(card);
   end;
 
   m_hand.Sort;
+end;
+
+function TDeck.GetRemainingCards: integer;
+begin
+  result := m_cards.Count;
 end;
 
 constructor TDeck.Create;
@@ -114,7 +124,7 @@ begin
     if card.Selected then
     begin
       playList.Add(card);
-      m_cards.Add(card);
+      //m_cards.Add(card);
     end;
   end;
 
@@ -125,6 +135,7 @@ begin
   score := rules.Apply;
   m_credits := rules.Score;
   m_total := m_total + m_credits;
+  m_description := rules.ScoreDescription(score);
   rules.Free;
 
   RefillHand;
@@ -144,7 +155,7 @@ begin
     if card.Selected then
     begin
       toRemove.Add(card);
-      m_cards.Add(card);
+      //m_cards.Add(card);
     end;
   end;
 
