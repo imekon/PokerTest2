@@ -90,13 +90,30 @@ end;
 procedure TDeck.ToggleSelect(index: integer);
 var
   card: TCard;
+  rules: TRules;
+  playList: TCardList;
+  score: TPokerScore;
 
 begin
   if (index >= 0) and (index < m_hand.Cards.Count) then
   begin
     card := m_hand.Cards[index];
     if ((card.Selected = false) and (m_hand.SelectedCount < 5)) or (card.Selected = true) then
+    begin
       card.Selected := not card.Selected;
+      playList := TCardList.Create;
+
+      for card in m_hand.Cards do
+      begin
+        if card.Selected then
+          playList.Add(card);
+      end;
+
+      rules := TRules.Create(playList);
+      score := rules.Apply;
+      m_description := rules.ScoreDescription(score);
+      rules.Free;
+    end;
   end;
 end;
 
@@ -122,10 +139,7 @@ begin
   for card in m_hand.Cards do
   begin
     if card.Selected then
-    begin
       playList.Add(card);
-      //m_cards.Add(card);
-    end;
   end;
 
   for card in playList do

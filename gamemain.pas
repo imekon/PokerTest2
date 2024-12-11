@@ -130,7 +130,6 @@ begin
     DrawText(PChar(text), x + 3, y + 3, 30, WHITE);
   end;
 
-
   if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) and over then
     result := true;
 end;
