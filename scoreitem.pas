@@ -20,7 +20,7 @@ type
     m_scoring: array [ROYAL_FLUSH..NO_SCORE] of TScoringRung;
   public
     constructor Create;
-    function Scoring(hand: TPokerScore; score: integer): integer;
+    function Scoring(hand: TPokerScore; score, adder, multiplier: integer): integer;
   end;
 
 implementation
@@ -30,16 +30,16 @@ implementation
 const
   ScoringDefault: array [ROYAL_FLUSH..NO_SCORE] of TScoringRung =
     (
-      (Adder: 50; Multiplier: 20),
-      (Adder: 45; Multiplier: 18),
-      (Adder: 40; Multiplier: 16),
-      (Adder: 35; Multiplier: 14),
-      (Adder: 30; Multiplier: 12),
-      (Adder: 25; Multiplier: 10),
-      (Adder: 20; Multiplier: 8),
-      (Adder: 15; Multiplier: 6),
-      (Adder: 10; Multiplier: 4),
-      (Adder: 5; Multiplier: 2),
+      (Adder: 20; Multiplier: 20),
+      (Adder: 17; Multiplier: 18),
+      (Adder: 15; Multiplier: 16),
+      (Adder: 12; Multiplier: 14),
+      (Adder: 10; Multiplier: 12),
+      (Adder: 9; Multiplier: 10),
+      (Adder: 7; Multiplier: 8),
+      (Adder: 5; Multiplier: 4),
+      (Adder: 4; Multiplier: 2),
+      (Adder: 2; Multiplier: 1),
       (Adder: 0; Multiplier: 0)
     );
 
@@ -52,9 +52,10 @@ begin
     m_scoring[i] := ScoringDefault[i];
 end;
 
-function TScoringLadder.Scoring(hand: TPokerScore; score: integer): integer;
+function TScoringLadder.Scoring(hand: TPokerScore; score, adder,
+  multiplier: integer): integer;
 begin
-  result := (m_scoring[hand].Adder + score) * m_scoring[hand].Multiplier;
+  result := (m_scoring[hand].Adder + score + adder) * m_scoring[hand].Multiplier * multiplier;
 end;
 
 end.

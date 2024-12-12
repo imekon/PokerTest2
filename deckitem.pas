@@ -150,7 +150,7 @@ begin
 
   rules := TRules.Create(playList);
   score := rules.Apply;
-  m_credits := m_scoring.Scoring(score, rules.Score);
+  m_credits := m_scoring.Scoring(score, rules.Score, 0, 1);
   m_total := m_total + m_credits;
   m_description := rules.ScoreDescription(score);
   rules.Free;
