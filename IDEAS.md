@@ -1,0 +1,2 @@
+- Add pages to display scoring ladder
+- Add periodic table to add 'metal' cards?
