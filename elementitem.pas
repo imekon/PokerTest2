@@ -9,7 +9,7 @@ uses
 
 type
 
-  TElementType = (ELEMENT_METAL);
+  TElementType = (ELEMENT_METAL, ELEMENT_NONMETAL, ELEMENT_GAS);
 
   { TElement }
 
@@ -77,7 +77,8 @@ var
   number: integer;
   symbol: string;
   name: string;
-  elementType: string;
+  elementTypeName: string;
+  elementType: TElementType;
   element: TElement;
 
 begin
@@ -90,8 +91,13 @@ begin
       number := StrToInt(csv.Cells[0, row]);
       symbol := csv.Cells[1, row];
       name := csv.Cells[2, row];
-      elementType := csv.Cells[3, row];
-      element := TElement.Create(number, symbol, name, ELEMENT_METAL);
+      elementTypeName := csv.Cells[3, row];
+      case elementTypeName of
+        'metal': elementType := ELEMENT_METAL;
+        'nonmetal': elementType := ELEMENT_NONMETAL;
+        'gas': elementType := ELEMENT_GAS;
+      end;
+      element := TElement.Create(number, symbol, name, elementType);
       m_elements.Add(element);
     end;
   finally
