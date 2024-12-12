@@ -5,7 +5,7 @@ unit gamemain;
 interface
 
 uses
-  Classes, SysUtils, raylib, carditem, handitem, deckitem;
+  Classes, SysUtils, raylib, raygui, carditem, handitem, deckitem;
 
 type
 
@@ -21,7 +21,7 @@ type
     procedure Update;
     procedure Draw;
     procedure DrawMetalCard(x, y: integer; const symbol, name: string; number: integer);
-    function Button(const text: string; x, y, w, h: integer): boolean;
+    //function Button(const text: string; x, y, w, h: integer): boolean;
     property Hand: THand read GetHand;
   end;
 
@@ -46,6 +46,8 @@ constructor TGame.Create;
 begin
   m_deck := TDeck.Create;
   m_deck.DealHand;
+
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 28);
 end;
 
 destructor TGame.Destroy;
@@ -58,6 +60,7 @@ procedure TGame.Update;
 var
   index: integer;
   position: TVector2;
+  bounds: TRectangle;
 
 begin
   if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) then
@@ -74,12 +77,33 @@ begin
   else if IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) then
     m_deck.ResetSelection;
 
-  if Button('Play Hand', LEFT_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
+  bounds.x := LEFT_MARGIN;
+  bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
+  bounds.width := 160;
+  bounds.height := 35;
+  if GuiButton(bounds, 'Play Hand') = 1 then
+    m_deck.PlayHand;
+
+  bounds.x := LEFT_MARGIN + 200;
+  bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
+  bounds.width := 160;
+  bounds.height := 35;
+  if GuiButton(bounds, 'Discard') = 1 then
+    m_deck.DiscardHand;
+
+  bounds.x := LEFT_MARGIN + 400;
+  bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
+  bounds.width := 160;
+  bounds.height := 35;
+  if GuiButton(bounds, 'New Deal') = 1 then
+    m_deck.NewDeal;
+
+  {*if Button('Play Hand', LEFT_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
     m_deck.PlayHand
   else if Button('Discard', LEFT_MARGIN + 200, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
     m_deck.DiscardHand
   else if Button('Deal', LEFT_MARGIN + 400, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
-    m_deck.NewDeal;
+    m_deck.NewDeal;*}
 end;
 
 procedure TGame.Draw;
@@ -119,6 +143,7 @@ begin
   DrawText(PChar(name), x + 10, y + 140, 20, BLACK);
 end;
 
+{*
 function TGame.Button(const text: string; x, y, w, h: integer): boolean;
 var
   point: TVector2;
@@ -149,6 +174,7 @@ begin
   if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) and over then
     result := true;
 end;
+*}
 
 end.
 

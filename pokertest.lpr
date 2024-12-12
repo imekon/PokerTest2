@@ -8,7 +8,7 @@ uses
   //raymath,
   //rlgl,
   raylib, gamemain, carditem, deckitem, handitem, rulesitem, scoreitem,
-elementitem;
+  elementitem;
 
 const
   screenWidth = 1024;
