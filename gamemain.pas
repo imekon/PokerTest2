@@ -101,6 +101,8 @@ begin
   DrawText(PChar('Credits: ' + IntToStr(m_deck.Credits)), 20, 50, 30, WHITE);
   DrawText(PChar('Deck: ' + IntToStr(m_deck.Remaining)), 20, 80, 30, WHITE);
   DrawText(PChar(m_deck.Description), 20, 110, 30, WHITE);
+  DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
+    IntToStr(m_deck.Discards)), 20, 140, 30, WHITE);
 end;
 
 function TGame.Button(const text: string; x, y, w, h: integer): boolean;

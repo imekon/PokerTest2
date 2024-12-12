@@ -16,6 +16,8 @@ type
     m_cards: TCards;
     m_hand: THand;
     m_total: integer;
+    m_rounds: integer;
+    m_discards: integer;
     m_credits: integer;
     m_description: string;
     m_scoring: TScoringLadder;
@@ -34,6 +36,8 @@ type
     property Total: integer read m_total;
     property Credits: integer read m_credits;
     property Description: string read m_description;
+    property Rounds: integer read m_rounds;
+    property Discards: integer read m_discards;
   end;
 
 implementation
@@ -65,6 +69,8 @@ begin
   m_cards := TCards.Create;
   m_hand := THand.Create;
   m_scoring := TScoringLadder.Create;
+  m_rounds := 3;
+  m_discards := 3;
 end;
 
 destructor TDeck.Destroy;
@@ -137,6 +143,10 @@ var
   score: TPokerScore;
 
 begin
+  if m_rounds = 0 then exit;
+
+  dec(m_rounds);
+
   playList := TCardList.Create;
 
   for card in m_hand.Cards do
@@ -166,6 +176,10 @@ var
   toRemove: TCardList;
 
 begin
+  if m_discards = 0 then exit;
+
+  dec(m_discards);
+
   toRemove := TCardList.Create;
   for card in m_hand.Cards do
   begin
