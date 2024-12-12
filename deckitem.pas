@@ -5,7 +5,7 @@ unit deckitem;
 interface
 
 uses
-  Classes, SysUtils, carditem, handitem, rulesitem;
+  Classes, SysUtils, carditem, handitem, rulesitem, scoreitem;
 
 type
 
@@ -18,6 +18,7 @@ type
     m_total: integer;
     m_credits: integer;
     m_description: string;
+    m_scoring: TScoringLadder;
     function GetRemainingCards: integer;
     procedure RefillHand;
   public
@@ -63,12 +64,14 @@ constructor TDeck.Create;
 begin
   m_cards := TCards.Create;
   m_hand := THand.Create;
+  m_scoring := TScoringLadder.Create;
 end;
 
 destructor TDeck.Destroy;
 begin
   m_hand.Free;
   m_cards.Free;
+  m_scoring.Free;
   inherited Destroy;
 end;
 
@@ -147,7 +150,7 @@ begin
 
   rules := TRules.Create(playList);
   score := rules.Apply;
-  m_credits := rules.Score;
+  m_credits := m_scoring.Scoring(score, rules.Score);
   m_total := m_total + m_credits;
   m_description := rules.ScoreDescription(score);
   rules.Free;
@@ -177,6 +180,8 @@ begin
     m_hand.Remove(card);
 
   RefillHand;
+
+  m_description := '';
 
   toRemove.Free;
 end;

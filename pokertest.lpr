@@ -7,7 +7,7 @@ uses
   {uncomment if necessary}
   //raymath,
   //rlgl,
-  raylib, gamemain, carditem, deckitem, handitem, rulesitem;
+  raylib, gamemain, carditem, deckitem, handitem, rulesitem, scoreitem;
 
 const
   screenWidth = 1024;

@@ -105,20 +105,28 @@ function TRules.IsInline: boolean;
 var
   card: TCard;
   index: TCardIndex;
+  first: boolean;
 
 begin
   result := false;
 
-  index := 0; // ACE, which isn't legal for this (legal for Royal)
+  index := 0;
+  first := true;
 
   for card in m_cards do
   begin
-    if index = 0 then
-      index := card.CardIndex
+    if first then
+    begin
+      index := card.CardIndex;
+      first := false;
+    end
     else
       if index <> card.CardIndex then exit;
 
-    dec(index);
+    if index = 0 then
+      index := 12
+    else
+      dec(index);
   end;
 
   result := true;

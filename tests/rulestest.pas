@@ -20,6 +20,7 @@ type
     procedure FullHouseScore;
     procedure FlushScore;
     procedure StraightScore;
+    procedure StraightScore2;
     procedure ThreeOfAKindScore;
     procedure TwoPairsScore;
     procedure PairScore;
@@ -248,6 +249,30 @@ begin
   list.Add(TCard.Create(SUIT_HEARTS, 7, texture));
   list.Add(TCard.Create(SUIT_SPADES, 6, texture));
   list.Add(TCard.Create(SUIT_HEARTS, 5, texture));
+  rules := TRules.Create(list);
+  score := rules.Apply;
+  rules.Free;
+  AssertTrue('Straight', score = STRAIGHT);
+
+  list.Free;
+end;
+
+procedure PokerRulesTest.StraightScore2;
+var
+  list: TCardList;
+  rules: TRules;
+  score: TPokerScore;
+  texture: TTexture2D;
+
+begin
+  list := TCardList.Create;
+  texture := GetShapesTexture;
+
+  list.Add(TCard.Create(SUIT_HEARTS, 0, texture));
+  list.Add(TCard.Create(SUIT_CLUBS, 12, texture));
+  list.Add(TCard.Create(SUIT_HEARTS, 11, texture));
+  list.Add(TCard.Create(SUIT_SPADES, 10, texture));
+  list.Add(TCard.Create(SUIT_HEARTS, 9, texture));
   rules := TRules.Create(list);
   score := rules.Apply;
   rules.Free;
