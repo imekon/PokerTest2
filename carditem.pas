@@ -187,14 +187,16 @@ end;
 
 procedure TCards.Shuffle;
 var
-  i, other: integer;
+  i, n, other: integer;
 
 begin
-  for i := 0 to m_cards.Count - 1 do
+  n := m_cards.Count;
+
+  for i := 0 to n - 1 do
   begin
-    other := Random(52);
+    other := Random(n);
     while other = i do
-      other := Random(52);
+      other := Random(n);
 
     SwapCards(i, other);
   end;

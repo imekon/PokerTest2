@@ -5,7 +5,7 @@ unit deckitem;
 interface
 
 uses
-  Classes, SysUtils, carditem, handitem, rulesitem, scoreitem;
+  Classes, SysUtils, carditem, handitem, rulesitem, scoreitem, elementitem;
 
 type
 
@@ -14,6 +14,7 @@ type
   TDeck = class
   private
     m_cards: TCards;
+    m_elements: TElements;
     m_hand: THand;
     m_total: integer;
     m_rounds: integer;
@@ -31,6 +32,7 @@ type
     procedure ResetSelection;
     procedure PlayHand;
     procedure DiscardHand;
+    procedure NewDeal;
     property Hand: THand read m_hand;
     property Remaining: integer read GetRemainingCards;
     property Total: integer read m_total;
@@ -69,6 +71,8 @@ begin
   m_cards := TCards.Create;
   m_hand := THand.Create;
   m_scoring := TScoringLadder.Create;
+  m_elements := TElements.Create;
+  m_elements.LoadFromFile('assets/elements.db');
   m_rounds := 3;
   m_discards := 3;
 end;
@@ -78,6 +82,7 @@ begin
   m_hand.Free;
   m_cards.Free;
   m_scoring.Free;
+  m_elements.Free;
   inherited Destroy;
 end;
 
@@ -156,7 +161,10 @@ begin
   end;
 
   for card in playList do
+  begin
     m_hand.Remove(card);
+    m_cards.Add(card);
+  end;
 
   rules := TRules.Create(playList);
   score := rules.Apply;
@@ -191,13 +199,36 @@ begin
   end;
 
   for card in toRemove do
+  begin
     m_hand.Remove(card);
+    m_cards.Add(card);
+  end;
 
   RefillHand;
 
   m_description := '';
 
   toRemove.Free;
+end;
+
+procedure TDeck.NewDeal;
+var
+  card: TCard;
+
+begin
+  m_total := 0;
+  m_credits := 0;
+  m_rounds := 3;
+  m_discards := 3;
+
+  for card in m_hand.Cards do
+    m_cards.Add(card);
+
+  m_hand.Clear;
+
+  m_cards.Shuffle;
+
+  DealHand;
 end;
 
 end.

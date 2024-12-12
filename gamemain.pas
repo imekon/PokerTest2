@@ -20,6 +20,7 @@ type
     destructor Destroy; override;
     procedure Update;
     procedure Draw;
+    procedure DrawMetalCard(x, y: integer; const symbol, name: string; number: integer);
     function Button(const text: string; x, y, w, h: integer): boolean;
     property Hand: THand read GetHand;
   end;
@@ -76,7 +77,9 @@ begin
   if Button('Play Hand', LEFT_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
     m_deck.PlayHand
   else if Button('Discard', LEFT_MARGIN + 200, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
-    m_deck.DiscardHand;
+    m_deck.DiscardHand
+  else if Button('Deal', LEFT_MARGIN + 400, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
+    m_deck.NewDeal;
 end;
 
 procedure TGame.Draw;
@@ -103,6 +106,17 @@ begin
   DrawText(PChar(m_deck.Description), 20, 110, 30, WHITE);
   DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
     IntToStr(m_deck.Discards)), 20, 140, 30, WHITE);
+
+  DrawMetalCard(10, 300, 'Pb', 'Lead', 100);
+end;
+
+procedure TGame.DrawMetalCard(x, y: integer; const symbol, name: string;
+  number: integer);
+begin
+  DrawRectangle(x, y, CARD_WIDTH - 8, CARD_HEIGHT, LIGHTGRAY);
+  DrawText(PChar(symbol), x + 5, y + 5, 20, BLACK);
+  DrawText(PChar(IntToStr(number)), x + 40, y + 70, 30, BLACK);
+  DrawText(PChar(name), x + 10, y + 140, 20, BLACK);
 end;
 
 function TGame.Button(const text: string; x, y, w, h: integer): boolean;

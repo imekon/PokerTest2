@@ -18,6 +18,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Clear;
     procedure Add(acard: TCard);
     procedure Sort;
     procedure Remove(acard: TCard);
@@ -54,6 +55,11 @@ destructor THand.Destroy;
 begin
   m_cards.Free;
   inherited Destroy;
+end;
+
+procedure THand.Clear;
+begin
+  m_cards.Clear;
 end;
 
 procedure THand.Add(acard: TCard);
