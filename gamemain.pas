@@ -77,6 +77,11 @@ begin
   else if IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) then
     m_deck.ResetSelection;
 
+  if m_deck.CanPlay then
+    GuiEnable
+  else
+    GuiDisable;
+
   bounds.x := LEFT_MARGIN;
   bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
   bounds.width := 160;
@@ -84,12 +89,19 @@ begin
   if GuiButton(bounds, 'Play Hand') = 1 then
     m_deck.PlayHand;
 
+  if m_deck.CanDiscard then
+    GuiEnable
+  else
+    GuiDisable;
+
   bounds.x := LEFT_MARGIN + 200;
   bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
   bounds.width := 160;
   bounds.height := 35;
   if GuiButton(bounds, 'Discard') = 1 then
     m_deck.DiscardHand;
+
+  GuiEnable;
 
   bounds.x := LEFT_MARGIN + 400;
   bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;

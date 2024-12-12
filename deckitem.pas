@@ -22,6 +22,8 @@ type
     m_credits: integer;
     m_description: string;
     m_scoring: TScoringLadder;
+    function GetCanDiscard: boolean;
+    function GetCanPlay: boolean;
     function GetRemainingCards: integer;
     procedure RefillHand;
   public
@@ -40,6 +42,8 @@ type
     property Description: string read m_description;
     property Rounds: integer read m_rounds;
     property Discards: integer read m_discards;
+    property CanPlay: boolean read GetCanPlay;
+    property CanDiscard: boolean read GetCanDiscard;
   end;
 
 implementation
@@ -64,6 +68,16 @@ end;
 function TDeck.GetRemainingCards: integer;
 begin
   result := m_cards.Count;
+end;
+
+function TDeck.GetCanDiscard: boolean;
+begin
+  result := m_discards > 0;
+end;
+
+function TDeck.GetCanPlay: boolean;
+begin
+  result := m_rounds > 0;
 end;
 
 constructor TDeck.Create;
@@ -164,6 +178,7 @@ begin
   begin
     m_hand.Remove(card);
     m_cards.Add(card);
+    card.Selected := false;
   end;
 
   rules := TRules.Create(playList);
@@ -192,16 +207,14 @@ begin
   for card in m_hand.Cards do
   begin
     if card.Selected then
-    begin
       toRemove.Add(card);
-      //m_cards.Add(card);
-    end;
   end;
 
   for card in toRemove do
   begin
     m_hand.Remove(card);
     m_cards.Add(card);
+    card.Selected := false;
   end;
 
   RefillHand;
