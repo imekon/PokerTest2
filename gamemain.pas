@@ -32,11 +32,18 @@ uses
 type
 
   { TGame }
+  TGamePage = (PAGE_WELCOME, PAGE_GAME, PAGE_RULES);
 
   TGame = class
   private
+    m_page: TGamePage;
     m_deck: TDeck;
+    m_viewScroll: TVector2;
+    m_viewRect: TRectangle;
     function GetHand: THand;
+    procedure DrawWelcome;
+    procedure DrawGame;
+    procedure DrawRules;
   public
     constructor Create;
     destructor Destroy; override;
@@ -63,81 +70,12 @@ begin
   result := m_deck.Hand;
 end;
 
-constructor TGame.Create;
+procedure TGame.DrawWelcome;
 begin
-  m_deck := TDeck.Create;
-  m_deck.DealHand;
-
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+  DrawText('Welcome to Periodic Poker!', 100, 400, 50, WHITE);
 end;
 
-destructor TGame.Destroy;
-begin
-  m_deck.Free;
-  inherited;
-end;
-
-procedure TGame.Update(delta: single);
-var
-  index: integer;
-  position: TVector2;
-  bounds: TRectangle;
-
-begin
-  if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) then
-  begin
-    position := GetMousePosition;
-    if (position.x > LEFT_MARGIN) and
-      (position.y > TOP_MARGIN) and
-      (position.y < TOP_MARGIN + CARD_HEIGHT) then
-    begin
-      index := (round(position.x) - LEFT_MARGIN) div CARD_WIDTH;
-      m_deck.ToggleSelect(index);
-    end;
-  end
-  else if IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) then
-    m_deck.ResetSelection;
-
-  if m_deck.CanPlay then
-    GuiEnable
-  else
-    GuiDisable;
-
-  bounds.x := LEFT_MARGIN;
-  bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
-  bounds.width := 160;
-  bounds.height := 40;
-  if GuiButton(bounds, 'Play Hand') = 1 then
-    m_deck.PlayHand;
-
-  if m_deck.CanDiscard then
-    GuiEnable
-  else
-    GuiDisable;
-
-  bounds.x := LEFT_MARGIN + 200;
-  bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
-  bounds.width := 160;
-  bounds.height := 40;
-  if GuiButton(bounds, 'Discard') = 1 then
-    m_deck.DiscardHand;
-
-  if m_deck.CanPlay then
-    GuiDisable
-  else
-    GuiEnable;
-
-  bounds.x := LEFT_MARGIN + 400;
-  bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
-  bounds.width := 160;
-  bounds.height := 40;
-  if GuiButton(bounds, 'New Deal') = 1 then
-    m_deck.NewDeal;
-
-  GuiEnable;
-end;
-
-procedure TGame.Draw;
+procedure TGame.DrawGame;
 var
   x, y: integer;
   card: TCard;
@@ -165,6 +103,89 @@ begin
   DrawText(PChar(m_deck.Description), 20, 140, 30, WHITE);
   DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
     IntToStr(m_deck.Discards)), 20, 170, 30, WHITE);
+
+  if m_deck.CanPlay then
+    GuiEnable
+  else
+    GuiDisable;
+
+  if GuiButton(RectangleCreate(LEFT_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Play Hand') = 1 then
+    m_deck.PlayHand;
+
+  if m_deck.CanDiscard then
+    GuiEnable
+  else
+    GuiDisable;
+
+  if GuiButton(RectangleCreate(LEFT_MARGIN + 200, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Discard') = 1 then
+    m_deck.DiscardHand;
+
+  if m_deck.CanPlay then
+    GuiDisable
+  else
+    GuiEnable;
+
+  if GuiButton(RectangleCreate(LEFT_MARGIN + 400, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'New Deal') = 1 then
+    m_deck.NewDeal;
+
+  GuiEnable;
+
+  //GuiScrollPanel(RectangleCreate(250, 150, 600, 400), 'Details',
+  //  RectangleCreate(250, 160, 600, 800), @m_viewScroll, @m_viewRect);
+end;
+
+procedure TGame.DrawRules;
+begin
+
+end;
+
+constructor TGame.Create;
+begin
+  m_page := PAGE_WELCOME;
+  m_deck := TDeck.Create;
+  m_deck.DealHand;
+
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+end;
+
+destructor TGame.Destroy;
+begin
+  m_deck.Free;
+  inherited;
+end;
+
+procedure TGame.Update(delta: single);
+var
+  index: integer;
+  position: TVector2;
+
+begin
+  case m_page of
+    PAGE_GAME:
+      begin
+        if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) then
+        begin
+          position := GetMousePosition;
+          if (position.x > LEFT_MARGIN) and
+            (position.y > TOP_MARGIN) and
+            (position.y < TOP_MARGIN + CARD_HEIGHT) then
+          begin
+            index := (round(position.x) - LEFT_MARGIN) div CARD_WIDTH;
+            m_deck.ToggleSelect(index);
+          end;
+        end
+        else if IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) then
+          m_deck.ResetSelection;
+      end;
+  end;
+end;
+
+procedure TGame.Draw;
+begin
+  case m_page of
+    PAGE_WELCOME: DrawWelcome;
+    PAGE_GAME: DrawGame;
+  end;
 end;
 
 procedure TGame.DrawMetalCard(x, y: integer; const symbol, name: string;
