@@ -18,10 +18,9 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Update;
+    procedure Update(delta: single);
     procedure Draw;
     procedure DrawMetalCard(x, y: integer; const symbol, name: string; number: integer);
-    //function Button(const text: string; x, y, w, h: integer): boolean;
     property Hand: THand read GetHand;
   end;
 
@@ -47,7 +46,7 @@ begin
   m_deck := TDeck.Create;
   m_deck.DealHand;
 
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 28);
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
 end;
 
 destructor TGame.Destroy;
@@ -56,7 +55,7 @@ begin
   inherited;
 end;
 
-procedure TGame.Update;
+procedure TGame.Update(delta: single);
 var
   index: integer;
   position: TVector2;
@@ -85,7 +84,7 @@ begin
   bounds.x := LEFT_MARGIN;
   bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
   bounds.width := 160;
-  bounds.height := 35;
+  bounds.height := 40;
   if GuiButton(bounds, 'Play Hand') = 1 then
     m_deck.PlayHand;
 
@@ -97,25 +96,23 @@ begin
   bounds.x := LEFT_MARGIN + 200;
   bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
   bounds.width := 160;
-  bounds.height := 35;
+  bounds.height := 40;
   if GuiButton(bounds, 'Discard') = 1 then
     m_deck.DiscardHand;
 
-  GuiEnable;
+  if m_deck.CanPlay then
+    GuiDisable
+  else
+    GuiEnable;
 
   bounds.x := LEFT_MARGIN + 400;
   bounds.y := TOP_MARGIN + CARD_HEIGHT + OFFSET;
   bounds.width := 160;
-  bounds.height := 35;
+  bounds.height := 40;
   if GuiButton(bounds, 'New Deal') = 1 then
     m_deck.NewDeal;
 
-  {*if Button('Play Hand', LEFT_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
-    m_deck.PlayHand
-  else if Button('Discard', LEFT_MARGIN + 200, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
-    m_deck.DiscardHand
-  else if Button('Deal', LEFT_MARGIN + 400, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 35) then
-    m_deck.NewDeal;*}
+  GuiEnable;
 end;
 
 procedure TGame.Draw;
@@ -143,7 +140,8 @@ begin
   DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
     IntToStr(m_deck.Discards)), 20, 140, 30, WHITE);
 
-  DrawMetalCard(10, 300, 'Pb', 'Lead', 100);
+  // sample drawing of a periodic card
+  DrawMetalCard(LEFT_MARGIN, 300, 'Pb', 'Lead', 100);
 end;
 
 procedure TGame.DrawMetalCard(x, y: integer; const symbol, name: string;
@@ -154,39 +152,6 @@ begin
   DrawText(PChar(IntToStr(number)), x + 40, y + 70, 30, BLACK);
   DrawText(PChar(name), x + 10, y + 140, 20, BLACK);
 end;
-
-{*
-function TGame.Button(const text: string; x, y, w, h: integer): boolean;
-var
-  point: TVector2;
-  bounds: TRectangle;
-  over: boolean;
-
-begin
-  result := false;
-
-  bounds.x := x;
-  bounds.y := y;
-  bounds.width := w;
-  bounds.height := h;
-  point := GetMousePosition;
-  over := CheckCollisionPointRec(point, bounds);
-
-  if over then
-  begin
-    DrawRectangle(x, y, w, h, LIGHTGRAY);
-    DrawText(PChar(text), x + 3, y + 3, 30, BLACK);
-  end
-  else
-  begin
-    DrawRectangle(x, y, w, h, DARKGRAY);
-    DrawText(PChar(text), x + 3, y + 3, 30, WHITE);
-  end;
-
-  if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) and over then
-    result := true;
-end;
-*}
 
 end.
 

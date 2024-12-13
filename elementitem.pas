@@ -16,12 +16,14 @@ type
   TElement = class
   private
     m_number: integer;
+    m_ev: single;
     m_symbol: string;
     m_name: string;
     m_type: TElementType;
   public
-    constructor Create(anumber: integer; asymbol: string; aname: string; atype: TElementType);
+    constructor Create(anumber: integer; anev: single; asymbol: string; aname: string; atype: TElementType);
     property Number: integer read m_number;
+    property EV: single read m_ev;
     property Symbol: string read m_symbol;
     property Name: string read m_name;
     property ElementType: TElementType read m_type;
@@ -43,10 +45,11 @@ type
 
 implementation
 
-constructor TElement.Create(anumber: integer; asymbol: string; aname: string;
-  atype: TElementType);
+constructor TElement.Create(anumber: integer; anev: single; asymbol: string;
+  aname: string; atype: TElementType);
 begin
   m_number := anumber;
+  m_ev := anev;
   m_symbol := asymbol;
   m_name := aname;
   m_type := atype;
@@ -75,6 +78,7 @@ var
   row: integer;
   csv: TCsvDocument;
   number: integer;
+  ev: single;
   symbol: string;
   name: string;
   elementTypeName: string;
@@ -89,15 +93,16 @@ begin
     for row := 0 to csv.RowCount - 1 do
     begin
       number := StrToInt(csv.Cells[0, row]);
-      symbol := csv.Cells[1, row];
-      name := csv.Cells[2, row];
-      elementTypeName := csv.Cells[3, row];
+      ev := StrToFloat(csv.Cells[1, row]);
+      symbol := csv.Cells[2, row];
+      name := csv.Cells[3, row];
+      elementTypeName := csv.Cells[4, row];
       case elementTypeName of
         'metal': elementType := ELEMENT_METAL;
         'nonmetal': elementType := ELEMENT_NONMETAL;
         'gas': elementType := ELEMENT_GAS;
       end;
-      element := TElement.Create(number, symbol, name, elementType);
+      element := TElement.Create(number, ev, symbol, name, elementType);
       m_elements.Add(element);
     end;
   finally

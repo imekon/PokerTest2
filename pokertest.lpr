@@ -32,7 +32,7 @@ begin
   while not WindowShouldClose do
     begin
       // Update
-      game.Update;
+      game.Update(GetFrameTime);
 
       // Draw
       BeginDrawing();
