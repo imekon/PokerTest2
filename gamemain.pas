@@ -1,3 +1,25 @@
+// MIT License
+//
+// Copyright (c) 2024 Pete Goodwin
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 unit gamemain;
 
 {$mode ObjFPC}{$H+}
@@ -133,15 +155,16 @@ begin
     inc(x, CARD_WIDTH);
   end;
 
-  DrawText(PChar('Total: ' + IntToStr(m_deck.Total)), 20, 20, 30, WHITE);
-  DrawText(PChar('Credits: ' + IntToStr(m_deck.Credits)), 20, 50, 30, WHITE);
-  DrawText(PChar('Deck: ' + IntToStr(m_deck.Remaining)), 20, 80, 30, WHITE);
-  DrawText(PChar(m_deck.Description), 20, 110, 30, WHITE);
-  DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
-    IntToStr(m_deck.Discards)), 20, 140, 30, WHITE);
-
   // sample drawing of a periodic card
   DrawMetalCard(LEFT_MARGIN, 300, 'Pb', 'Lead', 100);
+
+  DrawText(PChar('Games: ' + IntToStr(m_deck.Games)), 20, 20, 30, WHITE);
+  DrawText(PChar('Total: ' + IntToStr(m_deck.Total)), 20, 50, 30, WHITE);
+  DrawText(PChar('Credits: ' + IntToStr(m_deck.Credits)), 20, 80, 30, WHITE);
+  DrawText(PChar('Deck: ' + IntToStr(m_deck.Remaining)), 20, 110, 30, WHITE);
+  DrawText(PChar(m_deck.Description), 20, 140, 30, WHITE);
+  DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
+    IntToStr(m_deck.Discards)), 20, 170, 30, WHITE);
 end;
 
 procedure TGame.DrawMetalCard(x, y: integer; const symbol, name: string;

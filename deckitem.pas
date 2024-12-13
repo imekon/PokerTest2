@@ -1,3 +1,25 @@
+// MIT License
+//
+// Copyright (c) 2024 Pete Goodwin
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 unit deckitem;
 
 {$mode ObjFPC}{$H+}
@@ -16,6 +38,7 @@ type
     m_cards: TCards;
     m_elements: TElements;
     m_hand: THand;
+    m_games: integer;
     m_total: integer;
     m_rounds: integer;
     m_discards: integer;
@@ -37,6 +60,7 @@ type
     procedure NewDeal;
     property Hand: THand read m_hand;
     property Remaining: integer read GetRemainingCards;
+    property Games: integer read m_games;
     property Total: integer read m_total;
     property Credits: integer read m_credits;
     property Description: string read m_description;
@@ -89,6 +113,7 @@ begin
   m_elements.LoadFromFile('assets/elements.db');
   m_rounds := 3;
   m_discards := 3;
+  m_games := 0;
 end;
 
 destructor TDeck.Destroy;
@@ -229,13 +254,16 @@ var
   card: TCard;
 
 begin
-  m_total := 0;
+  inc(m_games);
   m_credits := 0;
   m_rounds := 3;
   m_discards := 3;
 
   for card in m_hand.Cards do
+  begin
     m_cards.Add(card);
+    card.Selected := false;
+  end;
 
   m_hand.Clear;
 
