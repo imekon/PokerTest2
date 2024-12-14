@@ -33,6 +33,7 @@ type
   TScoringRung = record
     Adder: integer;
     Multiplier: integer;
+    Level: integer;
   end;
 
   { TScoringLadder }
@@ -63,17 +64,17 @@ implementation
 const
   ScoringDefault: array [ROYAL_FLUSH..NO_SCORE] of TScoringRung =
     (
-      (Adder: 10; Multiplier: 16),
-      (Adder: 9; Multiplier: 16),
-      (Adder: 8; Multiplier: 8),
-      (Adder: 7; Multiplier: 8),
-      (Adder: 6; Multiplier: 4),
-      (Adder: 5; Multiplier: 4),
-      (Adder: 4; Multiplier: 2),
-      (Adder: 3; Multiplier: 2),
-      (Adder: 2; Multiplier: 1),
-      (Adder: 1; Multiplier: 1),
-      (Adder: 0; Multiplier: 0)
+      (Adder: 10; Multiplier: 16; Level: 1),
+      (Adder: 9;  Multiplier: 16; Level: 1),
+      (Adder: 8;  Multiplier: 8;  Level: 1),
+      (Adder: 7;  Multiplier: 8;  Level: 1),
+      (Adder: 6;  Multiplier: 4;  Level: 1),
+      (Adder: 5;  Multiplier: 4;  Level: 1),
+      (Adder: 4;  Multiplier: 2;  Level: 1),
+      (Adder: 3;  Multiplier: 2;  Level: 1),
+      (Adder: 2;  Multiplier: 1;  Level: 1),
+      (Adder: 1;  Multiplier: 1;  Level: 1),
+      (Adder: 0;  Multiplier: 0;  Level: 1)
     );
 
 constructor TScoringLadder.Create;

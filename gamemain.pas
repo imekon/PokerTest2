@@ -143,23 +143,35 @@ begin
 end;
 
 procedure TGame.DrawRules;
+const
+  NAME_X = 100;
+  ADDER_X = 400;
+  MULT_X = 480;
+  LEVEL_X = 600;
+
 var
   rung: TScoringRung;
   score: TPokerScore;
   y: integer;
 
 begin
+  DrawText('Name', NAME_X, 60, 20, WHITE);
+  DrawText('Adder', ADDER_X, 60, 20, WHITE);
+  DrawText('Multiplier', MULT_X, 60, 20, WHITE);
+  DrawText('Level', LEVEL_X, 60, 20, WHITE);
+
   y := 100;
   for score := ROYAL_FLUSH to HIGH_CARD do
   begin
     rung := m_deck.ScoringLadder.GetRung(score);
-    DrawText(PChar(GetScoreDescription(score)), 100, y, 30, RAYWHITE);
-    DrawText(PChar(IntToStr(rung.Adder)), 400, y, 30, RAYWHITE);
-    DrawText(PChar(IntToStr(rung.Multiplier)), 600, y, 30, RAYWHITE);
+    DrawText(PChar(GetScoreDescription(score)), NAME_X, y, 30, RAYWHITE);
+    DrawText(PChar(IntToStr(rung.Adder)),       ADDER_X, y, 30, RAYWHITE);
+    DrawText(PChar(IntToStr(rung.Multiplier)),  MULT_X, y, 30, RAYWHITE);
+    DrawText(PChar(IntToStr(rung.Level)),       LEVEL_X, y, 30, RAYWHITE);
     inc(y, 40);
   end;
 
-  if GuiButton(RectangleCreate(100, 500, 100, 40), 'Back') = 1 then
+  if GuiButton(RectangleCreate(100, 550, 100, 40), 'Back') = 1 then
     m_page := PAGE_GAME;
 end;
 
