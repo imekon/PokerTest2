@@ -27,7 +27,7 @@ unit gamemain;
 interface
 
 uses
-  Classes, SysUtils, raylib, raygui, carditem, handitem, deckitem;
+  Classes, SysUtils, raylib, raygui, carditem, handitem, deckitem, scoreitem;
 
 type
 
@@ -100,13 +100,14 @@ begin
   DrawMetalCard(LEFT_MARGIN, 300, 'Pb', 'Lead', 100);
 
   DrawText(PChar('Target: ' + IntToStr(m_deck.Target)), 20, 20, 30, RAYWHITE);
-  DrawText(PChar('Games: ' + IntToStr(m_deck.Games)), 20, 50, 30, WHITE);
-  DrawText(PChar('Total: ' + IntToStr(m_deck.Total)), 20, 80, 30, WHITE);
-  DrawText(PChar('Credits: ' + IntToStr(m_deck.Credits)), 20, 110, 30, WHITE);
-  DrawText(PChar('Deck: ' + IntToStr(m_deck.Remaining)), 20, 140, 30, WHITE);
-  DrawText(PChar(m_deck.Description), 20, 170, 30, WHITE);
+  DrawText(PChar('Credits: '), 20, 50, 30, WHITE);
+  DrawText(PChar('Games: ' + IntToStr(m_deck.Games)), 20, 80, 30, WHITE);
+  DrawText(PChar('Total: ' + IntToStr(m_deck.Total)), 20, 110, 30, WHITE);
+  DrawText(PChar('Points: ' + IntToStr(m_deck.Points)), 20, 140, 30, WHITE);
+  DrawText(PChar('Deck: ' + IntToStr(m_deck.Remaining)), 20, 170, 30, WHITE);
+  DrawText(PChar(m_deck.Description), 20, 200, 30, WHITE);
   DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
-    IntToStr(m_deck.Discards)), 20, 200, 30, WHITE);
+    IntToStr(m_deck.Discards)), 20, 230, 30, WHITE);
 
   if m_deck.CanPlay then
     GuiEnable
@@ -134,13 +135,32 @@ begin
 
   GuiEnable;
 
+  if GuiButton(RectangleCreate(LEFT_MARGIN + 600, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Rules') = 1 then
+    m_page := PAGE_RULES;
+
   //GuiScrollPanel(RectangleCreate(250, 150, 600, 400), 'Details',
   //  RectangleCreate(250, 160, 600, 800), @m_viewScroll, @m_viewRect);
 end;
 
 procedure TGame.DrawRules;
-begin
+var
+  rung: TScoringRung;
+  score: TPokerScore;
+  y: integer;
 
+begin
+  y := 100;
+  for score := ROYAL_FLUSH to HIGH_CARD do
+  begin
+    rung := m_deck.ScoringLadder.GetRung(score);
+    DrawText(PChar(GetScoreDescription(score)), 100, y, 30, RAYWHITE);
+    DrawText(PChar(IntToStr(rung.Adder)), 400, y, 30, RAYWHITE);
+    DrawText(PChar(IntToStr(rung.Multiplier)), 600, y, 30, RAYWHITE);
+    inc(y, 40);
+  end;
+
+  if GuiButton(RectangleCreate(100, 500, 100, 40), 'Back') = 1 then
+    m_page := PAGE_GAME;
 end;
 
 constructor TGame.Create;
@@ -189,6 +209,7 @@ begin
   case m_page of
     PAGE_WELCOME: DrawWelcome;
     PAGE_GAME: DrawGame;
+    PAGE_RULES: DrawRules;
   end;
 end;
 

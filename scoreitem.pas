@@ -43,6 +43,7 @@ type
   public
     constructor Create;
     function Scoring(hand: TPokerScore; score, adder, multiplier: integer): integer;
+    function GetRung(hand: TPokerScore): TScoringRung;
   end;
 
   { TRoundsLadder }
@@ -88,6 +89,11 @@ function TScoringLadder.Scoring(hand: TPokerScore; score, adder,
   multiplier: integer): integer;
 begin
   result := (m_scoring[hand].Adder + score + adder) * m_scoring[hand].Multiplier * multiplier;
+end;
+
+function TScoringLadder.GetRung(hand: TPokerScore): TScoringRung;
+begin
+  result := m_scoring[hand];
 end;
 
 { TRoundsLadder }

@@ -57,7 +57,6 @@ type
     constructor Create(list: TCardList);
     function Apply: TPokerScore;
     function Score: integer;
-    function ScoreDescription(ascore: TPokerScore): string;
   end;
 
 implementation
@@ -520,22 +519,6 @@ begin
   end;
 
   result := total;
-end;
-
-function TRules.ScoreDescription(ascore: TPokerScore): string;
-begin
-  case ascore of
-    ROYAL_FLUSH: result := 'Royal Flush';
-    STRAIGHT_FLUSH: result := 'Straight Flush';
-    FOUR_OF_A_KIND: result := 'Four of a Kind';
-    FULL_HOUSE: result := 'Full House';
-    FLUSH: result := 'Flush';
-    STRAIGHT: result := 'Straight';
-    THREE_OF_A_KIND: result := 'Three of a Kind';
-    TWO_PAIRS: result := 'Two Pairs';
-    PAIR: result := 'Pair';
-    HIGH_CARD: result := 'High Card';
-  end;
 end;
 
 end.

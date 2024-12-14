@@ -42,7 +42,7 @@ type
     m_total: integer;
     m_rounds: integer;
     m_discards: integer;
-    m_credits: integer;
+    m_points: integer;
     m_description: string;
     m_scoring: TScoringLadder;
     m_roundsLadder: TRoundsLadder;
@@ -64,9 +64,11 @@ type
     property Remaining: integer read GetRemainingCards;
     property Games: integer read m_games;
     property Total: integer read m_total;
-    property Credits: integer read m_credits;
+    property Points: integer read m_points;
     property Description: string read m_description;
     property Rounds: integer read m_rounds;
+    property RoundsLadder: TRoundsLadder read m_roundsLadder;
+    property ScoringLadder: TScoringLadder read m_scoring;
     property Discards: integer read m_discards;
     property Target: integer read GetTarget;
     property CanPlay: boolean read GetCanPlay;
@@ -174,7 +176,7 @@ begin
 
       rules := TRules.Create(playList);
       score := rules.Apply;
-      m_description := rules.ScoreDescription(score);
+      m_description := GetScoreDescription(score);
       rules.Free;
     end;
   end;
@@ -218,9 +220,9 @@ begin
 
   rules := TRules.Create(playList);
   score := rules.Apply;
-  m_credits := m_scoring.Scoring(score, rules.Score, 0, 1);
-  m_total := m_total + m_credits;
-  m_description := rules.ScoreDescription(score);
+  m_points := m_scoring.Scoring(score, rules.Score, 0, 1);
+  m_total := m_total + m_points;
+  m_description := GetScoreDescription(score);
   rules.Free;
 
   RefillHand;
@@ -265,7 +267,7 @@ var
 
 begin
   inc(m_games);
-  m_credits := 0;
+  m_points := 0;
   m_rounds := 3;
   m_discards := 3;
 
