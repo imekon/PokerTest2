@@ -94,7 +94,7 @@ end;
 
 const
   scores: array [1..12] of integer =
-    (500, 1000, 1500, 2000, 3000, 5000,
+    (250, 500, 75, 1000, 2000, 5000,
     10000, 12000, 15000, 20000, 22000, 25000);
 
 constructor TRoundsLadder.Create;
