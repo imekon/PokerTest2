@@ -73,6 +73,9 @@ end;
 procedure TGame.DrawWelcome;
 begin
   DrawText('Welcome to Periodic Poker!', 100, 400, 50, WHITE);
+
+  if GuiButton(RectangleCreate(200, 500, 100, 40), 'Start') = 1 then
+    m_page := PAGE_GAME;
 end;
 
 procedure TGame.DrawGame;
@@ -96,13 +99,14 @@ begin
   // sample drawing of a periodic card
   DrawMetalCard(LEFT_MARGIN, 300, 'Pb', 'Lead', 100);
 
-  DrawText(PChar('Games: ' + IntToStr(m_deck.Games)), 20, 20, 30, WHITE);
-  DrawText(PChar('Total: ' + IntToStr(m_deck.Total)), 20, 50, 30, WHITE);
-  DrawText(PChar('Credits: ' + IntToStr(m_deck.Credits)), 20, 80, 30, WHITE);
-  DrawText(PChar('Deck: ' + IntToStr(m_deck.Remaining)), 20, 110, 30, WHITE);
-  DrawText(PChar(m_deck.Description), 20, 140, 30, WHITE);
+  DrawText(PChar('Target: ' + IntToStr(m_deck.Target)), 20, 20, 30, RAYWHITE);
+  DrawText(PChar('Games: ' + IntToStr(m_deck.Games)), 20, 50, 30, WHITE);
+  DrawText(PChar('Total: ' + IntToStr(m_deck.Total)), 20, 80, 30, WHITE);
+  DrawText(PChar('Credits: ' + IntToStr(m_deck.Credits)), 20, 110, 30, WHITE);
+  DrawText(PChar('Deck: ' + IntToStr(m_deck.Remaining)), 20, 140, 30, WHITE);
+  DrawText(PChar(m_deck.Description), 20, 170, 30, WHITE);
   DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
-    IntToStr(m_deck.Discards)), 20, 170, 30, WHITE);
+    IntToStr(m_deck.Discards)), 20, 200, 30, WHITE);
 
   if m_deck.CanPlay then
     GuiEnable

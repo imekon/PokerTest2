@@ -45,9 +45,11 @@ type
     m_credits: integer;
     m_description: string;
     m_scoring: TScoringLadder;
+    m_roundsLadder: TRoundsLadder;
     function GetCanDiscard: boolean;
     function GetCanPlay: boolean;
     function GetRemainingCards: integer;
+    function GetTarget: integer;
     procedure RefillHand;
   public
     constructor Create;
@@ -66,6 +68,7 @@ type
     property Description: string read m_description;
     property Rounds: integer read m_rounds;
     property Discards: integer read m_discards;
+    property Target: integer read GetTarget;
     property CanPlay: boolean read GetCanPlay;
     property CanDiscard: boolean read GetCanDiscard;
   end;
@@ -94,6 +97,11 @@ begin
   result := m_cards.Count;
 end;
 
+function TDeck.GetTarget: integer;
+begin
+  result := m_roundsLadder.GetScore(m_games + 1);
+end;
+
 function TDeck.GetCanDiscard: boolean;
 begin
   result := m_discards > 0;
@@ -109,6 +117,7 @@ begin
   m_cards := TCards.Create;
   m_hand := THand.Create;
   m_scoring := TScoringLadder.Create;
+  m_roundsLadder := TRoundsLadder.Create;
   m_elements := TElements.Create;
   m_elements.LoadFromFile('assets/elements.db');
   m_rounds := 3;
@@ -121,6 +130,7 @@ begin
   m_hand.Free;
   m_cards.Free;
   m_scoring.Free;
+  m_roundsLadder.Free;
   m_elements.Free;
   inherited Destroy;
 end;

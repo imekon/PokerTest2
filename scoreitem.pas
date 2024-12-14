@@ -45,6 +45,16 @@ type
     function Scoring(hand: TPokerScore; score, adder, multiplier: integer): integer;
   end;
 
+  { TRoundsLadder }
+
+  TRoundsLadder = class
+  private
+    m_score: array [1..12] of integer;
+  public
+    constructor Create;
+    function GetScore(level: integer): integer;
+  end;
+
 implementation
 
 { TScoringLadder }
@@ -52,16 +62,16 @@ implementation
 const
   ScoringDefault: array [ROYAL_FLUSH..NO_SCORE] of TScoringRung =
     (
-      (Adder: 20; Multiplier: 20),
-      (Adder: 17; Multiplier: 18),
-      (Adder: 15; Multiplier: 16),
-      (Adder: 12; Multiplier: 14),
-      (Adder: 10; Multiplier: 12),
-      (Adder: 9; Multiplier: 10),
+      (Adder: 10; Multiplier: 16),
+      (Adder: 9; Multiplier: 16),
+      (Adder: 8; Multiplier: 8),
       (Adder: 7; Multiplier: 8),
+      (Adder: 6; Multiplier: 4),
       (Adder: 5; Multiplier: 4),
       (Adder: 4; Multiplier: 2),
+      (Adder: 3; Multiplier: 2),
       (Adder: 2; Multiplier: 1),
+      (Adder: 1; Multiplier: 1),
       (Adder: 0; Multiplier: 0)
     );
 
@@ -78,6 +88,27 @@ function TScoringLadder.Scoring(hand: TPokerScore; score, adder,
   multiplier: integer): integer;
 begin
   result := (m_scoring[hand].Adder + score + adder) * m_scoring[hand].Multiplier * multiplier;
+end;
+
+{ TRoundsLadder }
+
+const
+  scores: array [1..12] of integer =
+    (500, 1000, 1500, 2000, 3000, 5000,
+    10000, 12000, 15000, 20000, 22000, 25000);
+
+constructor TRoundsLadder.Create;
+var
+  i: integer;
+
+begin
+  for i := Low(scores) to High(scores) do
+    m_score[i] := scores[i];
+end;
+
+function TRoundsLadder.GetScore(level: integer): integer;
+begin
+  result := m_score[level];
 end;
 
 end.
