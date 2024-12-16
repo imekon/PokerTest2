@@ -6,3 +6,6 @@ pokertest
 unittests.exe
 unittests.lps
 unittests
+gameloading.exe
+gameloading.lps
+gameloading
