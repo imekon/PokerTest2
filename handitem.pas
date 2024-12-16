@@ -36,6 +36,7 @@ type
   THand = class
   private
     m_cards: TCardList;
+    function GetAnySelected: boolean;
     function GetSelectedCount: integer;
   public
     constructor Create;
@@ -46,6 +47,7 @@ type
     procedure Remove(acard: TCard);
     property Cards: TCardList read m_cards;
     property SelectedCount: integer read GetSelectedCount;
+    property AnySelected: boolean read GetAnySelected;
   end;
 
 
@@ -66,6 +68,21 @@ begin
     if card.Selected then inc(total);
 
   result := total;
+end;
+
+function THand.GetAnySelected: boolean;
+var
+  card: TCard;
+
+begin
+  result := false;
+
+  for card in m_cards do
+    if card.Selected then
+    begin
+      result := true;
+      exit;
+    end;
 end;
 
 constructor THand.Create;

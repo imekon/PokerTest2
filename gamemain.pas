@@ -37,6 +37,7 @@ type
   TGame = class
   private
     m_page: TGamePage;
+    m_backPage: TGamePage;
     m_deck: TDeck;
     //m_viewScroll: TVector2;
     //m_viewRect: TRectangle;
@@ -83,7 +84,10 @@ begin
   DrawText('Welcome to Periodic Poker!', 100, 400, 50, WHITE);
 
   if GuiButton(RectangleCreate(200, 500, 100, 40), 'Start') = 1 then
+  begin
     m_page := PAGE_GAME;
+    m_backPage := PAGE_GAME;
+  end;
 end;
 
 procedure TGame.DrawGame;
@@ -127,7 +131,7 @@ begin
   if GuiButton(RectangleCreate(BUTTON_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Play Hand') = 1 then
     m_deck.PlayHand;
 
-  if m_deck.CanDiscard then
+  if m_deck.CanDiscard and m_deck.Hand.AnySelected then
     GuiEnable
   else
     GuiDisable;
@@ -144,15 +148,24 @@ begin
     m_deck.NewDeal;
 
   if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 3, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Shop') = 1 then
+  begin
     m_page := PAGE_SHOP;
+    m_backPage := PAGE_GAME;
+  end;
 
   GuiEnable;
 
   if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 4, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Rules') = 1 then
+  begin
     m_page := PAGE_RULES;
+    m_backPage := PAGE_GAME;
+  end;
 
   if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 5, TOP_MARGIN + CARD_HEIGHT + OFFSET, 40, 40), '?') = 1 then
+  begin
     m_page := PAGE_ABOUT;
+    m_backPage := PAGE_GAME;
+  end;
 
   //GuiScrollPanel(RectangleCreate(250, 150, 600, 400), 'Details',
   //  RectangleCreate(250, 160, 600, 800), @m_viewScroll, @m_viewRect);
@@ -163,7 +176,10 @@ begin
   ClearBackground(DARKGREEN);
   DrawText('Shop', 100, 200, 50, RAYWHITE);
   if GuiButton(RectangleCreate(100, 300, 100, 30), 'Back') = 1 then
+  begin
     m_page := PAGE_GAME;
+    m_backPage := PAGE_GAME;
+  end;
 end;
 
 procedure TGame.DrawRules;
@@ -198,26 +214,33 @@ begin
   end;
 
   if GuiButton(RectangleCreate(100, 550, 100, 40), 'Back') = 1 then
+  begin
     m_page := PAGE_GAME;
+    m_backPage := PAGE_GAME;
+  end;
 end;
 
 procedure TGame.DrawAbout;
 begin
   ClearBackground(RAYWHITE);
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 14);
   GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
   GuiTextBox(RectangleCreate(100, 100, 700, 400),
-    'A simple poker game based on rules seen in Balatro', 20, false);
+    'A simple poker game based on rules seen in Balatro. I was curious, could I create' +
+    ' a game similar to Balatro but in my own way, using the rules of Poker',
+    30, false);
   GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
   if GuiButton(RectangleCreate(100, 650, 100, 40), 'Back') = 1 then
   begin
     m_page := PAGE_GAME;
+    m_backPage := PAGE_GAME;
   end;
 end;
 
 constructor TGame.Create;
 begin
   m_page := PAGE_WELCOME;
+  m_backPage := PAGE_WELCOME;
   m_deck := TDeck.Create;
   m_deck.DealHand;
 
