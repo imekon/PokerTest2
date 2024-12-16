@@ -58,7 +58,6 @@ begin
 
       // Draw
       BeginDrawing();
-        ClearBackground(DARKGREEN);
         game.Draw;
       EndDrawing();
     end;

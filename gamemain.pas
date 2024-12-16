@@ -32,18 +32,20 @@ uses
 type
 
   { TGame }
-  TGamePage = (PAGE_WELCOME, PAGE_GAME, PAGE_RULES);
+  TGamePage = (PAGE_WELCOME, PAGE_GAME, PAGE_SHOP, PAGE_RULES, PAGE_ABOUT);
 
   TGame = class
   private
     m_page: TGamePage;
     m_deck: TDeck;
-    m_viewScroll: TVector2;
-    m_viewRect: TRectangle;
+    //m_viewScroll: TVector2;
+    //m_viewRect: TRectangle;
     function GetHand: THand;
     procedure DrawWelcome;
     procedure DrawGame;
+    procedure DrawShop;
     procedure DrawRules;
+    procedure DrawAbout;
   public
     constructor Create;
     destructor Destroy; override;
@@ -58,6 +60,10 @@ implementation
 { TGame }
 
 const
+  BUTTON_MARGIN = 20;
+  BUTTON_WIDTH = 100;
+  BUTTON_SPACING = 190;
+
   LEFT_MARGIN = 100;
   TOP_MARGIN = 500;
   SELECTED_OFFSET = 20;
@@ -72,6 +78,8 @@ end;
 
 procedure TGame.DrawWelcome;
 begin
+  ClearBackground(DARKGREEN);
+
   DrawText('Welcome to Periodic Poker!', 100, 400, 50, WHITE);
 
   if GuiButton(RectangleCreate(200, 500, 100, 40), 'Start') = 1 then
@@ -84,6 +92,8 @@ var
   card: TCard;
 
 begin
+  ClearBackground(DARKGREEN);
+
   x := LEFT_MARGIN;
   y := TOP_MARGIN;
   for card in m_deck.Hand.Cards do
@@ -114,7 +124,7 @@ begin
   else
     GuiDisable;
 
-  if GuiButton(RectangleCreate(LEFT_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Play Hand') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Play Hand') = 1 then
     m_deck.PlayHand;
 
   if m_deck.CanDiscard then
@@ -122,7 +132,7 @@ begin
   else
     GuiDisable;
 
-  if GuiButton(RectangleCreate(LEFT_MARGIN + 200, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Discard') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Discard') = 1 then
     m_deck.DiscardHand;
 
   if m_deck.CanPlay then
@@ -130,16 +140,30 @@ begin
   else
     GuiEnable;
 
-  if GuiButton(RectangleCreate(LEFT_MARGIN + 400, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'New Deal') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 2, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'New Deal') = 1 then
     m_deck.NewDeal;
+
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 3, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Shop') = 1 then
+    m_page := PAGE_SHOP;
 
   GuiEnable;
 
-  if GuiButton(RectangleCreate(LEFT_MARGIN + 600, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Rules') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 4, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Rules') = 1 then
     m_page := PAGE_RULES;
+
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 5, TOP_MARGIN + CARD_HEIGHT + OFFSET, 40, 40), '?') = 1 then
+    m_page := PAGE_ABOUT;
 
   //GuiScrollPanel(RectangleCreate(250, 150, 600, 400), 'Details',
   //  RectangleCreate(250, 160, 600, 800), @m_viewScroll, @m_viewRect);
+end;
+
+procedure TGame.DrawShop;
+begin
+  ClearBackground(DARKGREEN);
+  DrawText('Shop', 100, 200, 50, RAYWHITE);
+  if GuiButton(RectangleCreate(100, 300, 100, 30), 'Back') = 1 then
+    m_page := PAGE_GAME;
 end;
 
 procedure TGame.DrawRules;
@@ -155,6 +179,8 @@ var
   y: integer;
 
 begin
+  ClearBackground(DARKGREEN);
+
   DrawText('Name', NAME_X, 60, 20, WHITE);
   DrawText('Adder', ADDER_X, 60, 20, WHITE);
   DrawText('Multiplier', MULT_X, 60, 20, WHITE);
@@ -173,6 +199,20 @@ begin
 
   if GuiButton(RectangleCreate(100, 550, 100, 40), 'Back') = 1 then
     m_page := PAGE_GAME;
+end;
+
+procedure TGame.DrawAbout;
+begin
+  ClearBackground(RAYWHITE);
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+  GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
+  GuiTextBox(RectangleCreate(100, 100, 700, 400),
+    'A simple poker game based on rules seen in Balatro', 20, false);
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+  if GuiButton(RectangleCreate(100, 650, 100, 40), 'Back') = 1 then
+  begin
+    m_page := PAGE_GAME;
+  end;
 end;
 
 constructor TGame.Create;
@@ -220,8 +260,10 @@ procedure TGame.Draw;
 begin
   case m_page of
     PAGE_WELCOME: DrawWelcome;
-    PAGE_GAME: DrawGame;
-    PAGE_RULES: DrawRules;
+    PAGE_GAME:    DrawGame;
+    PAGE_RULES:   DrawRules;
+    PAGE_SHOP:    DrawShop;
+    PAGE_ABOUT:   DrawAbout;
   end;
 end;
 
