@@ -48,18 +48,22 @@ type
     m_roundsLadder: TRoundsLadder;
     function GetCanDiscard: boolean;
     function GetCanPlay: boolean;
+    function GetLoaded: boolean;
+    function GetProgress: single;
     function GetRemainingCards: integer;
     function GetTarget: integer;
     procedure RefillHand;
   public
     constructor Create;
     destructor Destroy; override;
+    procedure LoadTextures;
     procedure DealHand;
     procedure ToggleSelect(index: integer);
     procedure ResetSelection;
     procedure PlayHand;
     procedure DiscardHand;
     procedure NewDeal;
+    property Progress: single read GetProgress;
     property Hand: THand read m_hand;
     property Remaining: integer read GetRemainingCards;
     property Games: integer read m_games;
@@ -71,6 +75,7 @@ type
     property ScoringLadder: TScoringLadder read m_scoring;
     property Discards: integer read m_discards;
     property Target: integer read GetTarget;
+    property Loaded: boolean read GetLoaded;
     property CanPlay: boolean read GetCanPlay;
     property CanDiscard: boolean read GetCanDiscard;
   end;
@@ -114,6 +119,19 @@ begin
   result := m_rounds > 0;
 end;
 
+function TDeck.GetLoaded: boolean;
+begin
+  result := m_cards.ImagesLoaded and m_cards.TexturesLoaded;
+end;
+
+function TDeck.GetProgress: single;
+begin
+  if Assigned(m_cards) then
+    result := m_cards.Progress
+  else
+    result := 0.0;
+end;
+
 constructor TDeck.Create;
 begin
   m_cards := TCards.Create;
@@ -135,6 +153,12 @@ begin
   m_roundsLadder.Free;
   m_elements.Free;
   inherited Destroy;
+end;
+
+procedure TDeck.LoadTextures;
+begin
+  if m_cards.ImagesLoaded and not m_cards.TexturesLoaded then
+    m_cards.LoadTexturesFromImages;
 end;
 
 procedure TDeck.DealHand;

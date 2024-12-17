@@ -23,6 +23,7 @@
 unit gamemain;
 
 {$mode ObjFPC}{$H+}
+{$define ENABLE_THREADING}
 
 interface
 
@@ -36,6 +37,7 @@ type
 
   TGame = class
   private
+    m_progress: single;
     m_page: TGamePage;
     m_backPage: TGamePage;
     m_deck: TDeck;
@@ -47,6 +49,7 @@ type
     procedure DrawShop;
     procedure DrawRules;
     procedure DrawAbout;
+    procedure UpdateWelcome;
   public
     constructor Create;
     destructor Destroy; override;
@@ -83,11 +86,26 @@ begin
 
   DrawText('Welcome to Periodic Poker!', 100, 400, 50, WHITE);
 
-  if GuiButton(RectangleCreate(200, 500, 100, 40), 'Start') = 1 then
+  GuiProgressBar(RectangleCreate(250, 460, 400, 20), nil, nil, @m_progress, 0.0, 1.0);
+
+  {$IFDEF ENABLE_THREADING}
+  if m_deck.Loaded then
+    GuiEnable
+  else
+    GuiDisable;
+  {$ENDIF}
+
+  if GuiButton(RectangleCreate(400, 500, 100, 40), 'Start') = 1 then
   begin
+    {$IFDEF ENABLE_THREADING}
+    m_deck.DealHand;
+    {$ENDIF}
+
     m_page := PAGE_GAME;
     m_backPage := PAGE_GAME;
   end;
+
+  GuiEnable;
 end;
 
 procedure TGame.DrawGame;
@@ -237,12 +255,22 @@ begin
   end;
 end;
 
+procedure TGame.UpdateWelcome;
+begin
+  m_progress := m_deck.Progress;
+
+  m_deck.LoadTextures;
+end;
+
 constructor TGame.Create;
 begin
+  m_progress := 0;
   m_page := PAGE_WELCOME;
   m_backPage := PAGE_WELCOME;
   m_deck := TDeck.Create;
+{$IFNDEF ENABLE_THREADING}
   m_deck.DealHand;
+{$ENDIF}
 
   GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
 end;
@@ -260,6 +288,9 @@ var
 
 begin
   case m_page of
+    {$IFDEF ENABLE_THREADING}
+    PAGE_WELCOME: UpdateWelcome;
+    {$ENDIF}
     PAGE_GAME:
       begin
         if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) then

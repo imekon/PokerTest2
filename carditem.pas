@@ -23,6 +23,7 @@
 unit carditem;
 
 {$mode ObjFPC}{$H+}
+{$define ENABLE_THREADING}
 
 interface
 
@@ -59,6 +60,8 @@ type
 
   TCardList = specialize TFPGList<TCard>;
 
+  TCardLoader = class;
+
   { TCards }
 
   TCards = class
@@ -67,6 +70,7 @@ type
     m_progress: single;
     m_imagesLoaded: boolean;
     m_texturesLoaded: boolean;
+    m_cardLoader: TCardLoader;
     procedure CreateCardImage(asuit: TSuit; acard: TCardIndex; const filename: string);
     function GetCardCount: integer;
     procedure LoadImages;
@@ -78,8 +82,10 @@ type
     procedure Shuffle;
     procedure Add(acard: TCard);
     function Remove: TCard;
+    procedure LoadTexturesFromImages;
     property ImagesLoaded: boolean read m_imagesLoaded;
     property TexturesLoaded: boolean read m_texturesLoaded;
+    property Progress: single read m_progress;
     property Count: integer read GetCardCount;
   end;
 
@@ -127,7 +133,7 @@ end;
 { TCards }
 
 const
-  PROGRESS_INC = 1.0 / 54.0;
+  PROGRESS_INC = 1.0 / 53.0;
 
 procedure TCards.CreateCardImage(asuit: TSuit; acard: TCardIndex;
   const filename: string);
@@ -245,9 +251,15 @@ begin
   m_cards := TCardList.Create;
   m_imagesLoaded := false;
   m_texturesLoaded := false;
+
+{$IFDEF ENABLE_THREADING}
+  m_cardLoader := TCardLoader.Create(self);
+  m_cardLoader.Start;
+{$ELSE}
   LoadImages;
   LoadTextures;
   Shuffle;
+{$ENDIF}
 end;
 
 destructor TCards.Destroy;
@@ -298,6 +310,12 @@ begin
   card := m_cards[0];
   m_cards.Remove(card);
   result := card;
+end;
+
+procedure TCards.LoadTexturesFromImages;
+begin
+  LoadTextures;
+  m_texturesLoaded := true;
 end;
 
 { TCardLoader }
