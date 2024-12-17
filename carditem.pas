@@ -39,6 +39,7 @@ type
 
   TCard = class
   private
+    m_image: TImage;
     m_texture: TTexture2D;
     m_suit: TSuit;
     m_card: TCardIndex;
@@ -46,7 +47,7 @@ type
     m_scoring: boolean;
     function GetCardOrder: integer;
   public
-    constructor Create(asuit: TSuit; acard: TCardIndex; atexture: TTexture2D);
+    constructor Create(asuit: TSuit; acard: TCardIndex; anImage: TImage);
     destructor Destroy; override;
     property Suit: TSuit read m_suit;
     property CardIndex: TCardIndex read m_card;
@@ -63,9 +64,10 @@ type
   TCards = class
   private
     m_cards: TCardList;
-    function CreateCard(asuit: TSuit; acard: TCardIndex; const filename: string): TCard;
+    procedure CreateCardImage(asuit: TSuit; acard: TCardIndex; const filename: string);
     function GetCardCount: integer;
-    procedure LoadCards;
+    procedure LoadImages;
+    procedure LoadTextures;
     procedure SwapCards(a, b: integer);
   public
     constructor Create;
@@ -90,9 +92,9 @@ begin
     result := ord(m_card) + 1;
 end;
 
-constructor TCard.Create(asuit: TSuit; acard: TCardIndex; atexture: TTexture2D);
+constructor TCard.Create(asuit: TSuit; acard: TCardIndex; anImage: TImage);
 begin
-  m_texture := atexture;
+  m_image := anImage;
   m_suit := asuit;
   m_card := acard;
   m_selected := false;
@@ -101,21 +103,23 @@ end;
 
 destructor TCard.Destroy;
 begin
+  UnloadTexture(m_texture);
+  UnloadImage(m_image);
   inherited Destroy;
 end;
 
 { TCards }
 
-function TCards.CreateCard(asuit: TSuit; acard: TCardIndex;
-  const filename: string): TCard;
+procedure TCards.CreateCardImage(asuit: TSuit; acard: TCardIndex;
+  const filename: string);
 var
   card: TCard;
-  texture: TTexture2D;
+  image: TImage;
 
 begin
-  texture := LoadTexture(PChar(filename));
-  card := TCard.Create(asuit, acard, texture);
-  result := card;
+  image := LoadImage(PChar(filename));
+  card := TCard.Create(asuit, acard, image);
+  m_cards.Add(card);
 end;
 
 function TCards.GetCardCount: integer;
@@ -123,67 +127,80 @@ begin
   result := m_cards.Count;
 end;
 
-procedure TCards.LoadCards;
+procedure TCards.LoadImages;
 begin
   // CLUBS
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 0, 'assets/clubs/a_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 1, 'assets/clubs/2_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 2, 'assets/clubs/3_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 3, 'assets/clubs/4_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 4, 'assets/clubs/5_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 5, 'assets/clubs/6_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 6, 'assets/clubs/7_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 7, 'assets/clubs/8_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 8, 'assets/clubs/9_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 9, 'assets/clubs/10_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 10, 'assets/clubs/j_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 11, 'assets/clubs/q_clubs.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_CLUBS, 12, 'assets/clubs/k_clubs.png'));
+  CreateCardImage(TSuit.SUIT_CLUBS, 0, 'assets/clubs/a_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 1, 'assets/clubs/2_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 2, 'assets/clubs/3_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 3, 'assets/clubs/4_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 4, 'assets/clubs/5_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 5, 'assets/clubs/6_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 6, 'assets/clubs/7_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 7, 'assets/clubs/8_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 8, 'assets/clubs/9_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 9, 'assets/clubs/10_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 10, 'assets/clubs/j_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 11, 'assets/clubs/q_clubs.png');
+  CreateCardImage(TSuit.SUIT_CLUBS, 12, 'assets/clubs/k_clubs.png');
 
   // DIAMONDS
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 0, 'assets/diamonds/a_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 1, 'assets/diamonds/2_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 2, 'assets/diamonds/3_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 3, 'assets/diamonds/4_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 4, 'assets/diamonds/5_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 5, 'assets/diamonds/6_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 6, 'assets/diamonds/7_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 7, 'assets/diamonds/8_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 8, 'assets/diamonds/9_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 9, 'assets/diamonds/10_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 10, 'assets/diamonds/j_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 11, 'assets/diamonds/q_diamonds.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_DIAMONDS, 12, 'assets/diamonds/k_diamonds.png'));
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 0, 'assets/diamonds/a_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 1, 'assets/diamonds/2_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 2, 'assets/diamonds/3_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 3, 'assets/diamonds/4_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 4, 'assets/diamonds/5_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 5, 'assets/diamonds/6_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 6, 'assets/diamonds/7_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 7, 'assets/diamonds/8_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 8, 'assets/diamonds/9_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 9, 'assets/diamonds/10_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 10, 'assets/diamonds/j_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 11, 'assets/diamonds/q_diamonds.png');
+  CreateCardImage(TSuit.SUIT_DIAMONDS, 12, 'assets/diamonds/k_diamonds.png');
 
   // HEARTS
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 0, 'assets/hearts/A_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 1, 'assets/hearts/2_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 2, 'assets/hearts/3_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 3, 'assets/hearts/4_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 4, 'assets/hearts/5_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 5, 'assets/hearts/6_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 6, 'assets/hearts/7_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 7, 'assets/hearts/8_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 8, 'assets/hearts/9_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 9, 'assets/hearts/10_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 10, 'assets/hearts/J_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 11, 'assets/hearts/Q_hearts.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_HEARTS, 12, 'assets/hearts/K_hearts.png'));
+  CreateCardImage(TSuit.SUIT_HEARTS, 0, 'assets/hearts/A_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 1, 'assets/hearts/2_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 2, 'assets/hearts/3_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 3, 'assets/hearts/4_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 4, 'assets/hearts/5_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 5, 'assets/hearts/6_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 6, 'assets/hearts/7_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 7, 'assets/hearts/8_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 8, 'assets/hearts/9_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 9, 'assets/hearts/10_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 10, 'assets/hearts/J_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 11, 'assets/hearts/Q_hearts.png');
+  CreateCardImage(TSuit.SUIT_HEARTS, 12, 'assets/hearts/K_hearts.png');
 
   // SPADES
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 0, 'assets/spades/a_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 1, 'assets/spades/2_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 2, 'assets/spades/3_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 3, 'assets/spades/4_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 4, 'assets/spades/5_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 5, 'assets/spades/6_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 6, 'assets/spades/7_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 7, 'assets/spades/8_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 8, 'assets/spades/9_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 9, 'assets/spades/10_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 10, 'assets/spades/j_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 11, 'assets/spades/q_spades.png'));
-  m_cards.Add(CreateCard(TSuit.SUIT_SPADES, 12, 'assets/spades/k_spades.png'));
+  CreateCardImage(TSuit.SUIT_SPADES, 0, 'assets/spades/a_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 1, 'assets/spades/2_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 2, 'assets/spades/3_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 3, 'assets/spades/4_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 4, 'assets/spades/5_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 5, 'assets/spades/6_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 6, 'assets/spades/7_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 7, 'assets/spades/8_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 8, 'assets/spades/9_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 9, 'assets/spades/10_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 10, 'assets/spades/j_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 11, 'assets/spades/q_spades.png');
+  CreateCardImage(TSuit.SUIT_SPADES, 12, 'assets/spades/k_spades.png');
+end;
+
+procedure TCards.LoadTextures;
+var
+  card: TCard;
+  texture: TTexture2D;
+
+begin
+  for card in m_cards do
+  begin
+    texture := LoadTextureFromImage(card.m_image);
+    card.m_texture := texture;
+  end;
 end;
 
 procedure TCards.SwapCards(a, b: integer);
@@ -199,12 +216,19 @@ end;
 constructor TCards.Create;
 begin
   m_cards := TCardList.Create;
-  LoadCards;
+  LoadImages;
+  LoadTextures;
   Shuffle;
 end;
 
 destructor TCards.Destroy;
+var
+  card: TCard;
+
 begin
+  for card in m_cards do
+    card.Free;
+
   m_cards.Free;
   inherited Destroy;
 end;
