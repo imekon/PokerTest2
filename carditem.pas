@@ -133,7 +133,7 @@ end;
 { TCards }
 
 const
-  PROGRESS_INC = 1.0 / 53.0;
+  PROGRESS_INC = 1.0 / 52.0;
 
 procedure TCards.CreateCardImage(asuit: TSuit; acard: TCardIndex;
   const filename: string);
