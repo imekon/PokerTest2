@@ -64,6 +64,9 @@ type
   TCards = class
   private
     m_cards: TCardList;
+    m_progress: single;
+    m_imagesLoaded: boolean;
+    m_texturesLoaded: boolean;
     procedure CreateCardImage(asuit: TSuit; acard: TCardIndex; const filename: string);
     function GetCardCount: integer;
     procedure LoadImages;
@@ -75,7 +78,20 @@ type
     procedure Shuffle;
     procedure Add(acard: TCard);
     function Remove: TCard;
+    property ImagesLoaded: boolean read m_imagesLoaded;
+    property TexturesLoaded: boolean read m_texturesLoaded;
     property Count: integer read GetCardCount;
+  end;
+
+  { TCardLoader }
+
+  TCardLoader = class(TThread)
+  private
+    m_cards: TCards;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(cards: TCards);
   end;
 
   function GetScoreDescription(ascore: TPokerScore): string;
@@ -110,6 +126,9 @@ end;
 
 { TCards }
 
+const
+  PROGRESS_INC = 1.0 / 54.0;
+
 procedure TCards.CreateCardImage(asuit: TSuit; acard: TCardIndex;
   const filename: string);
 var
@@ -120,6 +139,8 @@ begin
   image := LoadImage(PChar(filename));
   card := TCard.Create(asuit, acard, image);
   m_cards.Add(card);
+
+  m_progress := m_progress + PROGRESS_INC;
 end;
 
 function TCards.GetCardCount: integer;
@@ -129,6 +150,8 @@ end;
 
 procedure TCards.LoadImages;
 begin
+  m_progress := 0.0;
+
   // CLUBS
   CreateCardImage(TSuit.SUIT_CLUBS, 0, 'assets/clubs/a_clubs.png');
   CreateCardImage(TSuit.SUIT_CLUBS, 1, 'assets/clubs/2_clubs.png');
@@ -188,6 +211,8 @@ begin
   CreateCardImage(TSuit.SUIT_SPADES, 10, 'assets/spades/j_spades.png');
   CreateCardImage(TSuit.SUIT_SPADES, 11, 'assets/spades/q_spades.png');
   CreateCardImage(TSuit.SUIT_SPADES, 12, 'assets/spades/k_spades.png');
+
+  m_imagesLoaded := true;
 end;
 
 procedure TCards.LoadTextures;
@@ -201,6 +226,8 @@ begin
     texture := LoadTextureFromImage(card.m_image);
     card.m_texture := texture;
   end;
+
+  m_texturesLoaded := true;
 end;
 
 procedure TCards.SwapCards(a, b: integer);
@@ -216,6 +243,8 @@ end;
 constructor TCards.Create;
 begin
   m_cards := TCardList.Create;
+  m_imagesLoaded := false;
+  m_texturesLoaded := false;
   LoadImages;
   LoadTextures;
   Shuffle;
@@ -269,6 +298,19 @@ begin
   card := m_cards[0];
   m_cards.Remove(card);
   result := card;
+end;
+
+{ TCardLoader }
+
+procedure TCardLoader.Execute;
+begin
+  m_cards.LoadImages;
+end;
+
+constructor TCardLoader.Create(cards: TCards);
+begin
+  m_cards := cards;
+  inherited Create(true);
 end;
 
 function GetScoreDescription(ascore: TPokerScore): string;
