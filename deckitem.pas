@@ -170,7 +170,10 @@ end;
 procedure TDeck.LoadTextures;
 begin
   if m_cards.ImagesLoaded and not m_cards.TexturesLoaded then
+  begin
     m_cards.LoadTexturesFromImages;
+    m_cards.Shuffle;
+  end;
 end;
 
 procedure TDeck.DealHand;
