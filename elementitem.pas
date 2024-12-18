@@ -58,10 +58,12 @@ type
   TElements = class
   private
     m_elements: TElementList;
+    procedure SwapElements(a, b: integer);
   public
     constructor Create;
     destructor Destroy; override;
     procedure LoadFromFile(const filename: string);
+    procedure Shuffle;
     property Elements: TElementList read m_elements;
   end;
 
@@ -78,6 +80,16 @@ begin
 end;
 
 { TElements }
+
+procedure TElements.SwapElements(a, b: integer);
+var
+  element: TElement;
+
+begin
+  element := m_elements[a];
+  m_elements[a] := m_elements[b];
+  m_elements[b] := element;
+end;
 
 constructor TElements.Create;
 begin
@@ -129,6 +141,23 @@ begin
     end;
   finally
     csv.Free;
+  end;
+end;
+
+procedure TElements.Shuffle;
+var
+  i, n, other: integer;
+
+begin
+  n := m_elements.Count;
+
+  for i := 0 to n - 1 do
+  begin
+    other := Random(n);
+    while other = i do
+      other := Random(n);
+
+    SwapElements(i, other);
   end;
 end;
 

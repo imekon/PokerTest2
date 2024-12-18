@@ -28,7 +28,7 @@ unit gamemain;
 interface
 
 uses
-  Classes, SysUtils, raylib, raygui, carditem, handitem, deckitem, scoreitem;
+  Classes, SysUtils, raylib, raygui, carditem, elementitem, handitem, deckitem, scoreitem;
 
 type
 
@@ -55,7 +55,7 @@ type
     destructor Destroy; override;
     procedure Update(delta: single);
     procedure Draw;
-    procedure DrawMetalCard(x, y: integer; const symbol, name: string; number: integer);
+    procedure DrawPeriodicCard(x, y: integer; const symbol, name: string; number: integer);
     property Hand: THand read GetHand;
   end;
 
@@ -110,8 +110,9 @@ end;
 
 procedure TGame.DrawGame;
 var
-  x, y: integer;
+  i, x, y: integer;
   card: TCard;
+  element: TElement;
 
 begin
   ClearBackground(DARKGREEN);
@@ -128,8 +129,13 @@ begin
     inc(x, CARD_WIDTH);
   end;
 
-  // sample drawing of a periodic card
-  DrawMetalCard(LEFT_MARGIN, 300, 'Pb', 'Lead', 100);
+  // TODO
+  for i := 0 to 4 do
+  begin
+    element := m_deck.Elements[i];
+    DrawPeriodicCard(LEFT_MARGIN + CARD_WIDTH * i, 300, element.Symbol,
+      element.Name, element.Number);
+  end;
 
   DrawText(PChar('Target: ' + IntToStr(m_deck.Target)), 20, 20, 30, RAYWHITE);
   DrawText(PChar('Credits: '), 20, 50, 30, WHITE);
@@ -321,13 +327,13 @@ begin
   end;
 end;
 
-procedure TGame.DrawMetalCard(x, y: integer; const symbol, name: string;
+procedure TGame.DrawPeriodicCard(x, y: integer; const symbol, name: string;
   number: integer);
 begin
   DrawRectangle(x, y, CARD_WIDTH - 8, CARD_HEIGHT, LIGHTGRAY);
-  DrawText(PChar(symbol), x + 5, y + 5, 20, BLACK);
-  DrawText(PChar(IntToStr(number)), x + 40, y + 70, 30, BLACK);
-  DrawText(PChar(name), x + 10, y + 140, 20, BLACK);
+  DrawText(PChar(IntToStr(number)), x + 5, y + 5, 20, BLACK);
+  DrawText(PChar(symbol), x + 40, y + 70, 30, BLACK);
+  DrawText(PChar(name), x + 5, y + 138, 20, BLACK);
 end;
 
 end.

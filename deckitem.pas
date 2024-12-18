@@ -48,6 +48,7 @@ type
     m_roundsLadder: TRoundsLadder;
     function GetCanDiscard: boolean;
     function GetCanPlay: boolean;
+    function GetElements: TElementList;
     function GetLoaded: boolean;
     function GetProgress: single;
     function GetRemainingCards: integer;
@@ -70,6 +71,7 @@ type
     property Total: integer read m_total;
     property Points: integer read m_points;
     property Description: string read m_description;
+    property Elements: TElementList read GetElements;
     property Rounds: integer read m_rounds;
     property RoundsLadder: TRoundsLadder read m_roundsLadder;
     property ScoringLadder: TScoringLadder read m_scoring;
@@ -119,6 +121,11 @@ begin
   result := m_rounds > 0;
 end;
 
+function TDeck.GetElements: TElementList;
+begin
+  result := m_elements.Elements;
+end;
+
 function TDeck.GetLoaded: boolean;
 begin
   result := m_cards.ImagesLoaded and m_cards.TexturesLoaded;
@@ -140,6 +147,7 @@ begin
   m_roundsLadder := TRoundsLadder.Create;
   m_elements := TElements.Create;
   m_elements.LoadFromFile('assets/elements.db');
+  m_elements.Shuffle;
   m_rounds := 3;
   m_discards := 3;
   m_games := 0;
