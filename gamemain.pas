@@ -38,6 +38,7 @@ type
   TGame = class
   private
     m_progress: single;
+    m_font: TFont;
     m_page: TGamePage;
     m_backPage: TGamePage;
     m_deck: TDeck;
@@ -60,6 +61,9 @@ type
   end;
 
 implementation
+
+uses
+  utilities;
 
 { TGame }
 
@@ -84,7 +88,7 @@ procedure TGame.DrawWelcome;
 begin
   ClearBackground(DARKGREEN);
 
-  DrawText('Welcome to Periodic Poker!', 100, 400, 50, WHITE);
+  DrawTextEx(m_font, 'Welcome to Periodic Poker!', Vec2(100, 390), 64, 1.0, WHITE);
 
   GuiProgressBar(RectangleCreate(250, 460, 400, 20), nil, nil, @m_progress, 0.0, 1.0);
 
@@ -117,6 +121,34 @@ var
 begin
   ClearBackground(DARKGREEN);
 
+  // SCORING
+  DrawTextEx(m_font, PChar('Target: ' + IntToStr(m_deck.Target)), Vec2(20, 20), 32, 1.0, RAYWHITE);
+  DrawTextEx(m_font, PChar('Credits: '), Vec2(20, 50), 32, 1.0, WHITE);
+  DrawTextEx(m_font, PChar('Games: ' + IntToStr(m_deck.Games)), Vec2(20, 80), 32, 1.0, WHITE);
+  DrawTextEx(m_font, PChar('Total: ' + IntToStr(m_deck.Total)), Vec2(20, 110), 32, 1.0, WHITE);
+  DrawTextEx(m_font, PChar('Points: ' + IntToStr(m_deck.Points)), Vec2(20, 140), 32, 1.0, WHITE);
+  DrawTextEx(m_font, PChar('Deck: ' + IntToStr(m_deck.Remaining)), Vec2(20, 170), 32, 1.0, WHITE);
+  DrawTextEx(m_font, PChar(m_deck.Description), Vec2(20, 200), 32, 1.0, WHITE);
+  DrawTextEx(m_font, PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
+    IntToStr(m_deck.Discards)), Vec2(20, 230), 32, 1.0, WHITE);
+
+  // PERIODIC CARDS AVAILABLE
+  for i := 0 to 2 do
+  begin
+    element := m_deck.Elements[i];
+    DrawPeriodicCard(500 + CARD_WIDTH * i, 100, element.Symbol,
+      element.Name, element.Number);
+  end;
+
+  // PERIODIC TABLE CARDS ACTIVE
+  for i := 0 to 4 do
+  begin
+    element := m_deck.Elements[i];
+    DrawPeriodicCard(LEFT_MARGIN + CARD_WIDTH * i, 300, element.Symbol,
+      element.Name, element.Number);
+  end;
+
+  // POKER CARDS
   x := LEFT_MARGIN;
   y := TOP_MARGIN;
   for card in m_deck.Hand.Cards do
@@ -129,24 +161,7 @@ begin
     inc(x, CARD_WIDTH);
   end;
 
-  // TODO
-  for i := 0 to 4 do
-  begin
-    element := m_deck.Elements[i];
-    DrawPeriodicCard(LEFT_MARGIN + CARD_WIDTH * i, 300, element.Symbol,
-      element.Name, element.Number);
-  end;
-
-  DrawText(PChar('Target: ' + IntToStr(m_deck.Target)), 20, 20, 30, RAYWHITE);
-  DrawText(PChar('Credits: '), 20, 50, 30, WHITE);
-  DrawText(PChar('Games: ' + IntToStr(m_deck.Games)), 20, 80, 30, WHITE);
-  DrawText(PChar('Total: ' + IntToStr(m_deck.Total)), 20, 110, 30, WHITE);
-  DrawText(PChar('Points: ' + IntToStr(m_deck.Points)), 20, 140, 30, WHITE);
-  DrawText(PChar('Deck: ' + IntToStr(m_deck.Remaining)), 20, 170, 30, WHITE);
-  DrawText(PChar(m_deck.Description), 20, 200, 30, WHITE);
-  DrawText(PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
-    IntToStr(m_deck.Discards)), 20, 230, 30, WHITE);
-
+  // BUTTONS
   if m_deck.CanPlay then
     GuiEnable
   else
@@ -190,15 +205,12 @@ begin
     m_page := PAGE_ABOUT;
     m_backPage := PAGE_GAME;
   end;
-
-  //GuiScrollPanel(RectangleCreate(250, 150, 600, 400), 'Details',
-  //  RectangleCreate(250, 160, 600, 800), @m_viewScroll, @m_viewRect);
 end;
 
 procedure TGame.DrawShop;
 begin
   ClearBackground(DARKGREEN);
-  DrawText('Shop', 100, 200, 50, RAYWHITE);
+  DrawTextEx(m_font, 'Shop', Vec2(100, 200), 48, 1.0, RAYWHITE);
   if GuiButton(RectangleCreate(100, 300, 100, 30), 'Back') = 1 then
   begin
     m_page := PAGE_GAME;
@@ -221,19 +233,19 @@ var
 begin
   ClearBackground(DARKGREEN);
 
-  DrawText('Name', NAME_X, 60, 20, WHITE);
-  DrawText('Adder', ADDER_X, 60, 20, WHITE);
-  DrawText('Multiplier', MULT_X, 60, 20, WHITE);
-  DrawText('Level', LEVEL_X, 60, 20, WHITE);
+  DrawTextEx(m_font, 'Name', Vec2(NAME_X, 60), 20, 1.0, WHITE);
+  DrawTextEx(m_font, 'Adder', Vec2(ADDER_X, 60), 20, 1.0, WHITE);
+  DrawTextEx(m_font, 'Multiplier', Vec2(MULT_X, 60), 20, 1.0, WHITE);
+  DrawTextEx(m_font, 'Level', Vec2(LEVEL_X, 60), 20, 1.0, WHITE);
 
   y := 100;
   for score := ROYAL_FLUSH to HIGH_CARD do
   begin
     rung := m_deck.ScoringLadder.GetRung(score);
-    DrawText(PChar(GetScoreDescription(score)), NAME_X, y, 30, RAYWHITE);
-    DrawText(PChar(IntToStr(rung.Adder)),       ADDER_X, y, 30, RAYWHITE);
-    DrawText(PChar(IntToStr(rung.Multiplier)),  MULT_X, y, 30, RAYWHITE);
-    DrawText(PChar(IntToStr(rung.Level)),       LEVEL_X, y, 30, RAYWHITE);
+    DrawTextEx(m_font, PChar(GetScoreDescription(score)), Vec2(NAME_X, y), 32, 1.0, RAYWHITE);
+    DrawTextEx(m_font, PChar(IntToStr(rung.Adder)),       Vec2(ADDER_X, y), 32, 1.0, RAYWHITE);
+    DrawTextEx(m_font, PChar(IntToStr(rung.Multiplier)),  Vec2(MULT_X, y), 32, 1.0, RAYWHITE);
+    DrawTextEx(m_font, PChar(IntToStr(rung.Level)),       Vec2(LEVEL_X, y), 32, 1.0, RAYWHITE);
     inc(y, 40);
   end;
 
@@ -247,13 +259,13 @@ end;
 procedure TGame.DrawAbout;
 begin
   ClearBackground(RAYWHITE);
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 14);
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 22);
   GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
   GuiTextBox(RectangleCreate(100, 100, 700, 400),
     'A simple poker game based on rules seen in Balatro. I was curious, could I create' +
     ' a game similar to Balatro but in my own way, using the rules of Poker',
-    30, false);
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+    22, false);
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 32);
   if GuiButton(RectangleCreate(100, 650, 100, 40), 'Back') = 1 then
   begin
     m_page := PAGE_GAME;
@@ -278,12 +290,16 @@ begin
   m_deck.DealHand;
 {$ENDIF}
 
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+  m_font := LoadFont('assets/fonts/SF Atarian System.ttf');
+
+  GuiSetFont(m_font);
+  GuiSetStyle(DEFAULT, TEXT_SIZE, 32);
 end;
 
 destructor TGame.Destroy;
 begin
   m_deck.Free;
+  UnloadFont(m_font);
   inherited;
 end;
 
@@ -331,9 +347,9 @@ procedure TGame.DrawPeriodicCard(x, y: integer; const symbol, name: string;
   number: integer);
 begin
   DrawRectangle(x, y, CARD_WIDTH - 8, CARD_HEIGHT, LIGHTGRAY);
-  DrawText(PChar(IntToStr(number)), x + 5, y + 5, 20, BLACK);
-  DrawText(PChar(symbol), x + 40, y + 70, 30, BLACK);
-  DrawText(PChar(name), x + 5, y + 138, 20, BLACK);
+  DrawTextEx(m_font, PChar(IntToStr(number)), Vec2(x + 5, y + 5), 22, 1.0, BLACK);
+  DrawTextEx(m_font, PChar(symbol), Vec2(x + 35, y + 60), 48, 1.0, BLACK);
+  DrawTextEx(m_font, PChar(name), Vec2(x + 5, y + 138), 22, 1.0, BLACK);
 end;
 
 end.

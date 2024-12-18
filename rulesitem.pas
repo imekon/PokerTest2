@@ -27,7 +27,7 @@ unit rulesitem;
 interface
 
 uses
-  Classes, SysUtils, carditem, bucketitem;
+  Classes, SysUtils, carditem, bucketitem, overrideitem;
 
 type
 
@@ -56,7 +56,7 @@ type
   public
     constructor Create(list: TCardList);
     function Apply: TPokerScore;
-    function Score: integer;
+    function Score(overrides: TOverride): integer;
   end;
 
 implementation
@@ -503,7 +503,7 @@ begin
     result := NO_SCORE;
 end;
 
-function TRules.Score: integer;
+function TRules.Score(overrides: TOverride): integer;
 var
   card: TCard;
   total: integer;
@@ -512,7 +512,7 @@ begin
   total := 0;
   for card in m_cards do
   begin
-    if card.Scoring then
+    if card.Scoring or overrides.AllCardsScore then
     begin
       total := total + CardScoring[card.CardIndex];
     end;

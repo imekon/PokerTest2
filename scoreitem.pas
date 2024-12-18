@@ -43,7 +43,7 @@ type
     m_scoring: array [ROYAL_FLUSH..NO_SCORE] of TScoringRung;
   public
     constructor Create;
-    function Scoring(hand: TPokerScore; score, adder, multiplier: integer): integer;
+    function Scoring(hand: TPokerScore; score, adder: integer; multiplier: single): integer;
     function GetRung(hand: TPokerScore): TScoringRung;
   end;
 
@@ -86,10 +86,11 @@ begin
     m_scoring[i] := ScoringDefault[i];
 end;
 
-function TScoringLadder.Scoring(hand: TPokerScore; score, adder,
-  multiplier: integer): integer;
+function TScoringLadder.Scoring(hand: TPokerScore; score, adder: integer;
+  multiplier: single): integer;
 begin
-  result := (m_scoring[hand].Adder + score + adder) * m_scoring[hand].Multiplier * multiplier;
+  result := (m_scoring[hand].Adder + score + adder) *
+    round(m_scoring[hand].Multiplier * multiplier);
 end;
 
 function TScoringLadder.GetRung(hand: TPokerScore): TScoringRung;

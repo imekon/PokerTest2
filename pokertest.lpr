@@ -30,7 +30,7 @@ uses
   //raymath,
   //rlgl,
   raylib, gamemain, carditem, deckitem, handitem, rulesitem, scoreitem,
-  elementitem;
+  elementitem, overrideitem, abilityitem, utilities;
 
 const
   screenWidth = 1024;
@@ -52,15 +52,15 @@ begin
 
   // Main game loop
   while not WindowShouldClose do
-    begin
-      // Update
-      game.Update(GetFrameTime);
+  begin
+    // Update
+    game.Update(GetFrameTime);
 
-      // Draw
-      BeginDrawing();
-        game.Draw;
-      EndDrawing();
-    end;
+    // Draw
+    BeginDrawing();
+    game.Draw;
+    EndDrawing();
+  end;
 
   // De-Initialization
   game.Free;

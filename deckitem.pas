@@ -27,7 +27,8 @@ unit deckitem;
 interface
 
 uses
-  Classes, SysUtils, carditem, handitem, rulesitem, scoreitem, elementitem;
+  Classes, SysUtils, carditem, handitem, rulesitem, scoreitem, overrideitem,
+  elementitem;
 
 type
 
@@ -44,6 +45,7 @@ type
     m_discards: integer;
     m_points: integer;
     m_description: string;
+    m_override: TOverride;
     m_scoring: TScoringLadder;
     m_roundsLadder: TRoundsLadder;
     function GetCanDiscard: boolean;
@@ -148,6 +150,7 @@ begin
   m_elements := TElements.Create;
   m_elements.LoadFromFile('assets/elements.db');
   m_elements.Shuffle;
+  m_override := TOverride.Create;
   m_rounds := 3;
   m_discards := 3;
   m_games := 0;
@@ -160,6 +163,7 @@ begin
   m_scoring.Free;
   m_roundsLadder.Free;
   m_elements.Free;
+  m_override.Free;
   inherited Destroy;
 end;
 
@@ -252,7 +256,8 @@ begin
 
   rules := TRules.Create(playList);
   score := rules.Apply;
-  m_points := m_scoring.Scoring(score, rules.Score, 0, 1);
+  m_points := m_scoring.Scoring(score, rules.Score(m_override),
+    m_override.Addition, m_override.Multiplier);
   m_total := m_total + m_points;
   m_description := GetScoreDescription(score);
   rules.Free;
