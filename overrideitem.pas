@@ -66,9 +66,10 @@ begin
   Reset;
 
   for ability in m_abilities do
-    case ability.AbilityType of
-      ABILITY_ALLCARDSCORE: m_allCardsScore := true;
-    end;
+  begin
+    if ABILITY_ALLCARDSCORE in ability.Actions then
+      m_allCardsScore := true;
+  end;
 end;
 
 end.
