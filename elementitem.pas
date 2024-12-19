@@ -55,7 +55,7 @@ type
     property Symbol: string read m_symbol;
     property Name: string read m_name;
     property ElementType: TElementType read m_type;
-    property AbilityName: string read m_abilityName;
+    property AbilityName: string read m_abilityName write m_abilityName;
   end;
 
   TElementList = specialize TFPGList<TElement>;

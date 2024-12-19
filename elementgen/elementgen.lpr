@@ -25,17 +25,21 @@ program elementgen;
 uses
   fileutil, elementitem;
 
+const
+  DBFile = '../assets/elements.db';
+  BackupFile = '../assets/elements.bak';
+
 procedure ProcessElements;
 var
   elements: TElements;
 
 begin
   elements := TElements.Create;
-  elements.LoadFromFile('../assets/elements.db');
+  elements.LoadFromFile(DBFile);
 
-  //CopyFile('../assets/elements.db', '../assets/elements.bak');
+  //CopyFile(DBFile, BackupFile);
 
-  elements.SaveToFile('../assets/elements.db');
+  elements.SaveToFile(DBFile);
 
   elements.Free;
 end;
@@ -51,7 +55,7 @@ var
 
 begin
   elements := TElements.Create;
-  elements.LoadFromFile('../assets/elements.db');
+  elements.LoadFromFile(DBFile);
 
   none := 0;
   reserved := 0;
@@ -73,8 +77,75 @@ begin
   elements.Free;
 end;
 
+procedure CardElements;
+var
+  elements: TElements;
+  element: TElement;
+  card: integer;
+  suit: integer;
+  name: string;
+
+  function CardName(card: integer): string;
+  begin
+    case card of
+      1: result := 'A';
+      2: result := '2';
+      3: result := '3';
+      4: result := '4';
+      5: result := '5';
+      6: result := '6';
+      7: result := '7';
+      8: result := '8';
+      9: result := '9';
+      10: result := '10';
+      11: result := 'J';
+      12: result := 'Q';
+      13: result := 'K';
+    end;
+  end;
+
+  function SuitName(suit: integer): string;
+  begin
+    case suit of
+      1: result := 'Clubs';
+      2: result := 'Diamonds';
+      3: result := 'Hearts';
+      4: result := 'Spades';
+    end;
+  end;
+
 begin
-  StatsElements;
+  elements := TElements.Create;
+  elements.LoadFromFile(DBFile);
+
+  card := 1;
+  suit := 1;
+
+  for element in elements.Elements do
+  begin
+    if element.AbilityName = 'none' then
+    begin
+      name := 'Card:' + CardName(card) + ':' + SuitName(suit);
+      inc(card);
+      element.AbilityName := name;
+      WriteLn('Card name: ', name);
+
+      if card > 13 then
+      begin
+        inc(suit);
+        if suit > 4 then break;
+        card := 1;
+      end;
+    end;
+  end;
+
+  elements.SaveToFile(DBFile);
+
+  elements.Free;
+end;
+
+begin
+  CardElements;
   WriteLn('Press RETURN...');
   ReadLn;
 end.
