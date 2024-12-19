@@ -8,4 +8,5 @@ unittests.lps
 unittests
 gameloading.exe
 gameloading.lps
-gameloading
+elementgen.exe
+elementgen.lps

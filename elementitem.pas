@@ -42,11 +42,12 @@ type
     m_symbol: string;
     m_name: string;
     m_abilityName: string;
+    m_abilityDescription: string;
     m_ability: TAbility;
     m_type: TElementType;
   public
     constructor Create(anumber: integer; anev: single; asymbol: string;
-      aname: string; anability: string; atype: TElementType);
+      aname: string; anability, anabilityDesc: string; atype: TElementType);
     property Number: integer read m_number;
     property EV: single read m_ev;
     property Symbol: string read m_symbol;
@@ -66,6 +67,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure LoadFromFile(const filename: string);
+    procedure SaveToFile(const filename: string);
     procedure Shuffle;
     property Elements: TElementList read m_elements;
   end;
@@ -73,7 +75,7 @@ type
 implementation
 
 constructor TElement.Create(anumber: integer; anev: single; asymbol: string;
-  aname: string; anability: string; atype: TElementType);
+  aname: string; anability, anabilityDesc: string; atype: TElementType);
 begin
   m_number := anumber;
   m_ev := anev;
@@ -81,6 +83,7 @@ begin
   m_name := aname;
   m_type := atype;
   m_abilityName := anability;
+  m_abilityDescription := anabilityDesc;
   m_ability := nil;
 end;
 
@@ -121,6 +124,7 @@ var
   symbol: string;
   name: string;
   abilityName: string;
+  abilityDesc: string;
   elementTypeName: string;
   elementType: TElementType;
   element: TElement;
@@ -139,18 +143,57 @@ begin
       name := csv.Cells[3, row];
       elementTypeName := csv.Cells[4, row];
       abilityName := csv.Cells[5, row];
+      abilityDesc := csv.Cells[6, row];
       case elementTypeName of
         'metal': elementType := ELEMENT_METAL;
         'nonmetal': elementType := ELEMENT_NONMETAL;
         'gas': elementType := ELEMENT_GAS;
       end;
-      element := TElement.Create(number, ev, symbol, name, abilityName, elementType);
+      element := TElement.Create(number, ev, symbol, name, abilityName,
+        abilityDesc, elementType);
       m_elements.Add(element);
     end;
   finally
     csv.Free;
   end;
   TraceLog(LOG_INFO, PChar('ELEMENTS: total count ' + IntToStr(m_elements.Count)));
+end;
+
+procedure TElements.SaveToFile(const filename: string);
+var
+  row: integer;
+  csv: TCsvDocument;
+  element: TElement;
+
+  function ElementTypeToStr: string;
+  begin
+    case element.ElementType of
+      ELEMENT_METAL: result := 'metal';
+      ELEMENT_NONMETAL: result := 'nonmetal';
+      ELEMENT_GAS: result := 'gas';
+    end;
+  end;
+
+begin
+  csv := TCSVDocument.Create;
+  try
+    csv.Delimiter := ',';
+    row := 0;
+    for element in m_elements do
+    begin
+      csv.AddRow(IntToStr(element.Number));
+      csv.AddCell(row, FloatToStr(element.EV));
+      csv.AddCell(row, element.Symbol);
+      csv.AddCell(row, element.Name);
+      csv.AddCell(row, ElementTypeToStr);
+      csv.AddCell(row, element.m_abilityName);
+      csv.AddCell(row, 'None');
+      inc(row);
+    end;
+    csv.SaveToFile(filename);
+  finally
+    csv.Free;
+  end;
 end;
 
 procedure TElements.Shuffle;
