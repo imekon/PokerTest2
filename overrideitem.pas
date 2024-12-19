@@ -5,7 +5,7 @@ unit overrideitem;
 interface
 
 uses
-  Classes, SysUtils, abilityitem;
+  Classes, SysUtils, abilityitem, carditem;
 
 type
 
@@ -21,7 +21,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Process(abilities: TAbilityList);
+    procedure Process(cards: TCardList; abilities: TAbilityList);
     property Addition: integer read m_addition;
     property Multiplier: single read m_multiplier;
     property AllCardsScore: boolean read m_allCardsScore;
@@ -58,7 +58,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TOverride.Process(abilities: TAbilityList);
+procedure TOverride.Process(cards: TCardList; abilities: TAbilityList);
 var
   ability: TAbility;
 
@@ -67,8 +67,15 @@ begin
 
   for ability in m_abilities do
   begin
+    // NEED LIST OF CHOSEN CARDS TO CONSIDER!
+    // NEED TO CONSIDER CONDITIONS!
     if ABILITY_ALLCARDSCORE in ability.Actions then
       m_allCardsScore := true;
+    if ABILITY_ADDITION in ability.Actions then
+      m_addition := m_addition + round(ability.Values[VALUE_ADDITION]);
+    if ABILITY_MULTIPLIER in ability.Actions then
+      m_multiplier := m_multiplier * ability.Values[VALUE_MULTIPLIER];
+
   end;
 end;
 

@@ -27,7 +27,7 @@ unit elementitem;
 interface
 
 uses
-  Classes, SysUtils, fgl, csvdocument;
+  Classes, SysUtils, fgl, csvdocument, raylib, abilityitem;
 
 type
 
@@ -41,9 +41,12 @@ type
     m_ev: single;
     m_symbol: string;
     m_name: string;
+    m_abilityName: string;
+    m_ability: TAbility;
     m_type: TElementType;
   public
-    constructor Create(anumber: integer; anev: single; asymbol: string; aname: string; atype: TElementType);
+    constructor Create(anumber: integer; anev: single; asymbol: string;
+      aname: string; anability: string; atype: TElementType);
     property Number: integer read m_number;
     property EV: single read m_ev;
     property Symbol: string read m_symbol;
@@ -70,13 +73,15 @@ type
 implementation
 
 constructor TElement.Create(anumber: integer; anev: single; asymbol: string;
-  aname: string; atype: TElementType);
+  aname: string; anability: string; atype: TElementType);
 begin
   m_number := anumber;
   m_ev := anev;
   m_symbol := asymbol;
   m_name := aname;
   m_type := atype;
+  m_abilityName := anability;
+  m_ability := nil;
 end;
 
 { TElements }
@@ -115,11 +120,13 @@ var
   ev: single;
   symbol: string;
   name: string;
+  abilityName: string;
   elementTypeName: string;
   elementType: TElementType;
   element: TElement;
 
 begin
+  TraceLog(LOG_INFO, 'ELEMENTS: Loading periodic elements');
   csv := TCSVDocument.Create;
   try
     csv.Delimiter := ',';
@@ -131,17 +138,19 @@ begin
       symbol := csv.Cells[2, row];
       name := csv.Cells[3, row];
       elementTypeName := csv.Cells[4, row];
+      abilityName := csv.Cells[5, row];
       case elementTypeName of
         'metal': elementType := ELEMENT_METAL;
         'nonmetal': elementType := ELEMENT_NONMETAL;
         'gas': elementType := ELEMENT_GAS;
       end;
-      element := TElement.Create(number, ev, symbol, name, elementType);
+      element := TElement.Create(number, ev, symbol, name, abilityName, elementType);
       m_elements.Add(element);
     end;
   finally
     csv.Free;
   end;
+  TraceLog(LOG_INFO, PChar('ELEMENTS: total count ' + IntToStr(m_elements.Count)));
 end;
 
 procedure TElements.Shuffle;

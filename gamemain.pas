@@ -348,7 +348,7 @@ procedure TGame.DrawPeriodicCard(x, y: integer; const symbol, name: string;
 begin
   DrawRectangle(x, y, CARD_WIDTH - 8, CARD_HEIGHT, LIGHTGRAY);
   DrawTextEx(m_font, PChar(IntToStr(number)), Vec2(x + 5, y + 5), 22, 1.0, BLACK);
-  DrawTextEx(m_font, PChar(symbol), Vec2(x + 35, y + 60), 48, 1.0, BLACK);
+  DrawTextEx(m_font, PChar(symbol), Vec2(x + 25, y + 50), 64, 1.0, BLACK);
   DrawTextEx(m_font, PChar(name), Vec2(x + 5, y + 138), 22, 1.0, BLACK);
 end;
 
