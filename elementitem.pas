@@ -44,15 +44,18 @@ type
     m_abilityName: string;
     m_abilityDescription: string;
     m_ability: TAbility;
+    m_cost: integer;
     m_type: TElementType;
   public
     constructor Create(anumber: integer; anev: single; asymbol: string;
-      aname: string; anability, anabilityDesc: string; atype: TElementType);
+      aname: string; anability, anabilityDesc: string; acost: integer;
+      atype: TElementType);
     property Number: integer read m_number;
     property EV: single read m_ev;
     property Symbol: string read m_symbol;
     property Name: string read m_name;
     property ElementType: TElementType read m_type;
+    property AbilityName: string read m_abilityName;
   end;
 
   TElementList = specialize TFPGList<TElement>;
@@ -75,7 +78,8 @@ type
 implementation
 
 constructor TElement.Create(anumber: integer; anev: single; asymbol: string;
-  aname: string; anability, anabilityDesc: string; atype: TElementType);
+  aname: string; anability, anabilityDesc: string; acost: integer;
+  atype: TElementType);
 begin
   m_number := anumber;
   m_ev := anev;
@@ -85,6 +89,7 @@ begin
   m_abilityName := anability;
   m_abilityDescription := anabilityDesc;
   m_ability := nil;
+  m_cost := acost;
 end;
 
 { TElements }
@@ -127,6 +132,7 @@ var
   abilityDesc: string;
   elementTypeName: string;
   elementType: TElementType;
+  cost: integer;
   element: TElement;
 
 begin
@@ -144,13 +150,15 @@ begin
       elementTypeName := csv.Cells[4, row];
       abilityName := csv.Cells[5, row];
       abilityDesc := csv.Cells[6, row];
+      cost := StrToInt(csv.Cells[7, row]);
+
       case elementTypeName of
         'metal': elementType := ELEMENT_METAL;
         'nonmetal': elementType := ELEMENT_NONMETAL;
         'gas': elementType := ELEMENT_GAS;
       end;
       element := TElement.Create(number, ev, symbol, name, abilityName,
-        abilityDesc, elementType);
+        abilityDesc, cost, elementType);
       m_elements.Add(element);
     end;
   finally
@@ -187,7 +195,8 @@ begin
       csv.AddCell(row, element.Name);
       csv.AddCell(row, ElementTypeToStr);
       csv.AddCell(row, element.m_abilityName);
-      csv.AddCell(row, 'None');
+      csv.AddCell(row, element.m_abilityDescription);
+      csv.AddCell(row, IntToStr(element.m_cost));
       inc(row);
     end;
     csv.SaveToFile(filename);

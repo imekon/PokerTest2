@@ -25,6 +25,7 @@ program elementgen;
 uses
   fileutil, elementitem;
 
+procedure ProcessElements;
 var
   elements: TElements;
 
@@ -37,7 +38,43 @@ begin
   elements.SaveToFile('../assets/elements.db');
 
   elements.Free;
+end;
 
+procedure StatsElements;
+var
+  none: integer;
+  reserved: integer;
+  special: integer;
+
+  elements: TElements;
+  element: TElement;
+
+begin
+  elements := TElements.Create;
+  elements.LoadFromFile('../assets/elements.db');
+
+  none := 0;
+  reserved := 0;
+  special := 0;
+
+  for element in elements.Elements do
+  begin
+    case element.AbilityName of
+      'none': inc(none);
+      'reserved': inc(reserved);
+      'special': inc(special);
+    end;
+  end;
+
+  WriteLn('None: ', none);
+  WriteLn('Reserved: ', reserved);
+  WriteLn('Special: ', special);
+
+  elements.Free;
+end;
+
+begin
+  StatsElements;
   WriteLn('Press RETURN...');
   ReadLn;
 end.
