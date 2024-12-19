@@ -47,14 +47,20 @@ type
     function GetRung(hand: TPokerScore): TScoringRung;
   end;
 
+  TRoundsRung = record
+    Points: integer;
+    Credits: integer;
+  end;
+
   { TRoundsLadder }
 
   TRoundsLadder = class
   private
-    m_score: array [1..12] of integer;
+    m_score: array [1..12] of TRoundsRung;
   public
     constructor Create;
     function GetScore(level: integer): integer;
+    function GetCredits(level: integer): integer;
   end;
 
 implementation
@@ -102,8 +108,12 @@ end;
 
 const
   scores: array [1..12] of integer =
-    (250, 500, 75, 1000, 2000, 5000,
+    (250, 500, 750, 1000, 2000, 5000,
     10000, 12000, 15000, 20000, 22000, 25000);
+
+  credits: array [1..12] of integer =
+    (10, 10, 15, 20, 20, 25,
+    30, 30, 45, 50, 50, 100);
 
 constructor TRoundsLadder.Create;
 var
@@ -111,12 +121,17 @@ var
 
 begin
   for i := Low(scores) to High(scores) do
-    m_score[i] := scores[i];
+    m_score[i].Points := scores[i];
 end;
 
 function TRoundsLadder.GetScore(level: integer): integer;
 begin
-  result := m_score[level];
+  result := m_score[level].Points;
+end;
+
+function TRoundsLadder.GetCredits(level: integer): integer;
+begin
+  result := m_score[level].Credits;
 end;
 
 end.

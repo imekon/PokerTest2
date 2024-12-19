@@ -57,6 +57,8 @@ type
     procedure Update(delta: single);
     procedure Draw;
     procedure DrawPeriodicCard(x, y: integer; const symbol, name: string; number: integer);
+    procedure DrawTooltipCard(x, y: integer; card: TCard);
+    procedure DrawTooltipElement(x, y: integer; element: TElement);
     property Hand: THand read GetHand;
   end;
 
@@ -350,6 +352,16 @@ begin
   DrawTextEx(m_font, PChar(IntToStr(number)), Vec2(x + 5, y + 5), 22, 1.0, BLACK);
   DrawTextEx(m_font, PChar(symbol), Vec2(x + 25, y + 50), 64, 1.0, BLACK);
   DrawTextEx(m_font, PChar(name), Vec2(x + 5, y + 138), 22, 1.0, BLACK);
+end;
+
+procedure TGame.DrawTooltipCard(x, y: integer; card: TCard);
+begin
+  //
+end;
+
+procedure TGame.DrawTooltipElement(x, y: integer; element: TElement);
+begin
+  //
 end;
 
 end.
