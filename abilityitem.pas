@@ -27,7 +27,7 @@ unit abilityitem;
 interface
 
 uses
-  Classes, SysUtils, fgl;
+  Classes, SysUtils, fgl, carditem;
 
 type
   TAbilityType = (ABILITY_ALLCARDSCORE, ABILITY_ADDITION, ABILITY_MULTIPLIER, ABILITY_CREDITS);
@@ -40,9 +40,29 @@ type
   { TAbility }
 
   TAbility = class
+  protected
+    m_cost: integer;
+  public
+    constructor Create(acost: integer);
+    property Cost: integer read m_cost;
+  end;
+
+  { TCardAbility }
+
+  TCardAbility = class(TAbility)
+  private
+    m_card: TCardIndex;
+    m_suit: TSuit;
+  public
+    constructor Create(acard: TCardIndex; asuit: TSuit);
+  end;
+
+  { TConditionAbility }
+
+  TConditionAbility = class(TAbility)
   private
     m_actions: TAbilityMask;
-    m_conditions: TConditionMask;
+    m_conditions: TConditionMask; // Maybe make condition a separate class, aggregate?
     m_values: array [VALUE_ADDITION..VALUE_CREDITS] of single;
     function GetValue(index: TValueIndex): single;
   public
@@ -58,13 +78,32 @@ implementation
 
 { TAbility }
 
-function TAbility.GetValue(index: TValueIndex): single;
+constructor TAbility.Create(acost: integer);
+begin
+  m_cost := acost;
+end;
+
+{ TCardAbility }
+
+constructor TCardAbility.Create(acard: TCardIndex; asuit: TSuit);
+begin
+  inherited Create(10);
+
+  m_card := acard;
+  m_suit := asuit;
+end;
+
+{ TConditionAbility }
+
+function TConditionAbility.GetValue(index: TValueIndex): single;
 begin
   result := m_values[index];
 end;
 
-constructor TAbility.Create(aconditions: TConditionMask; aactions: TAbilityMask);
+constructor TConditionAbility.Create(aconditions: TConditionMask; aactions: TAbilityMask);
 begin
+  inherited Create(20);
+
   m_conditions := aconditions;
   m_actions := aactions;
   m_values[VALUE_ADDITION] := 0.0;

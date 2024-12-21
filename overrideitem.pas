@@ -83,21 +83,27 @@ end;
 procedure TOverride.Process(cards: TCardList; abilities: TAbilityList);
 var
   ability: TAbility;
+  conditionAbility: TConditionAbility;
 
 begin
   Reset;
 
   for ability in m_abilities do
   begin
-    // NEED LIST OF CHOSEN CARDS TO CONSIDER!
-    // NEED TO CONSIDER CONDITIONS!
-    if ABILITY_ALLCARDSCORE in ability.Actions then
-      m_allCardsScore := true;
-    if ABILITY_ADDITION in ability.Actions then
-      m_addition := m_addition + round(ability.Values[VALUE_ADDITION]);
-    if ABILITY_MULTIPLIER in ability.Actions then
-      m_multiplier := m_multiplier * ability.Values[VALUE_MULTIPLIER];
+    if ability is TConditionAbility then
+    begin
+      conditionAbility := ability as TConditionAbility;
 
+      // NEED LIST OF CHOSEN CARDS TO CONSIDER!
+      // NEED TO CONSIDER CONDITIONS!
+      if ABILITY_ALLCARDSCORE in conditionAbility.Actions then
+        m_allCardsScore := true;
+      if ABILITY_ADDITION in conditionAbility.Actions then
+        m_addition := m_addition + round(conditionAbility.Values[VALUE_ADDITION]);
+      if ABILITY_MULTIPLIER in conditionAbility.Actions then
+        m_multiplier := m_multiplier * conditionAbility.Values[VALUE_MULTIPLIER];
+
+    end;
   end;
 end;
 
