@@ -26,6 +26,9 @@ program pokertest;
 
 uses 
   cmem,
+  {$IFDEF UNIX}
+  cthreads,
+  {$ENDIF}
   {uncomment if necessary}
   //raymath,
   //rlgl,
