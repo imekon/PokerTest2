@@ -23,7 +23,6 @@
 unit carditem;
 
 {$mode ObjFPC}{$H+}
-{$define ENABLE_THREADING}
 
 interface
 
@@ -252,14 +251,8 @@ begin
   m_imagesLoaded := false;
   m_texturesLoaded := false;
 
-{$IFDEF ENABLE_THREADING}
   m_cardLoader := TCardLoader.Create(self);
   m_cardLoader.Start;
-{$ELSE}
-  LoadImages;
-  LoadTextures;
-  Shuffle;
-{$ENDIF}
 end;
 
 destructor TCards.Destroy;

@@ -65,6 +65,8 @@ type
   TElements = class
   private
     m_elements: TElementList;
+    m_shop: TElementList;
+    m_active: TElementList;
     procedure SwapElements(a, b: integer);
   public
     constructor Create;
@@ -107,6 +109,8 @@ end;
 constructor TElements.Create;
 begin
   m_elements := TElementList.Create;
+  m_shop := TElementList.Create;
+  m_active := TElementList.Create;
 end;
 
 destructor TElements.Destroy;
@@ -114,9 +118,13 @@ var
   element: TElement;
 
 begin
+  m_shop.Free;
+  m_active.Free;
+
   for element in m_elements do
     element.Free;
 
+  m_elements.Free;
   inherited Destroy;
 end;
 

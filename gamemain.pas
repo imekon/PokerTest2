@@ -23,7 +23,6 @@
 unit gamemain;
 
 {$mode ObjFPC}{$H+}
-{$define ENABLE_THREADING}
 
 interface
 
@@ -33,21 +32,21 @@ uses
 type
 
   { TGame }
-  TGamePage = (PAGE_WELCOME, PAGE_GAME, PAGE_SHOP, PAGE_RULES, PAGE_ABOUT);
+  TGamePage = (PAGE_WELCOME, PAGE_GAME, {* PAGE_SHOP, *} PAGE_RULES, PAGE_ABOUT);
+  TGameState = (STATE_NONE, STATE_PLAYING, STATE_SHOPPING);
 
   TGame = class
   private
     m_progress: single;
     m_font: TFont;
     m_page: TGamePage;
+    m_state: TGameState;
     m_backPage: TGamePage;
     m_deck: TDeck;
-    //m_viewScroll: TVector2;
-    //m_viewRect: TRectangle;
     function GetHand: THand;
     procedure DrawWelcome;
     procedure DrawGame;
-    procedure DrawShop;
+    //procedure DrawShop;
     procedure DrawRules;
     procedure DrawAbout;
     procedure UpdateWelcome;
@@ -56,7 +55,8 @@ type
     destructor Destroy; override;
     procedure Update(delta: single);
     procedure Draw;
-    procedure DrawPeriodicCard(x, y: integer; const symbol, name: string; number: integer);
+    procedure DrawPeriodicCard(x, y: integer; const symbol, name, action: string;
+      number, cost: integer);
     procedure DrawTooltipCard(x, y: integer; card: TCard);
     procedure DrawTooltipElement(x, y: integer; element: TElement);
     property Hand: THand read GetHand;
@@ -87,25 +87,25 @@ begin
 end;
 
 procedure TGame.DrawWelcome;
+const
+  TEXT_LEFT = 200;
+  TEXT_TOP = 320;
+
 begin
   ClearBackground(DARKGREEN);
 
-  DrawTextEx(m_font, 'Welcome to Periodic Poker!', Vec2(100, 390), 64, 1.0, WHITE);
+  DrawTextEx(m_font, 'Welcome to Periodic Poker!', Vec2(TEXT_LEFT, TEXT_TOP), 64, 1.0, WHITE);
 
-  GuiProgressBar(RectangleCreate(250, 460, 400, 20), nil, nil, @m_progress, 0.0, 1.0);
+  GuiProgressBar(RectangleCreate(TEXT_LEFT + 90, TEXT_TOP + 70, 400, 20), nil, nil, @m_progress, 0.0, 1.0);
 
-  {$IFDEF ENABLE_THREADING}
   if m_deck.Loaded then
     GuiEnable
   else
     GuiDisable;
-  {$ENDIF}
 
-  if GuiButton(RectangleCreate(400, 500, 100, 40), 'Start') = 1 then
+  if GuiButton(RectangleCreate(TEXT_LEFT + 250, TEXT_TOP + 110, 100, 40), 'Start') = 1 then
   begin
-    {$IFDEF ENABLE_THREADING}
     m_deck.DealHand;
-    {$ENDIF}
 
     m_page := PAGE_GAME;
     m_backPage := PAGE_GAME;
@@ -139,7 +139,7 @@ begin
   begin
     element := m_deck.Elements[i];
     DrawPeriodicCard(500 + CARD_WIDTH * i, 100, element.Symbol,
-      element.Name, element.Number);
+      element.Name, 'action', element.Number, 10);
   end;
 
   // PERIODIC TABLE CARDS ACTIVE
@@ -147,7 +147,7 @@ begin
   begin
     element := m_deck.Elements[i];
     DrawPeriodicCard(LEFT_MARGIN + CARD_WIDTH * i, 300, element.Symbol,
-      element.Name, element.Number);
+      element.Name, 'action', element.Number, 10);
   end;
 
   // POKER CARDS
@@ -188,11 +188,12 @@ begin
   if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 2, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'New Deal') = 1 then
     m_deck.NewDeal;
 
-  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 3, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Shop') = 1 then
+  {*if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 3, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Shop') = 1 then
   begin
     m_page := PAGE_SHOP;
     m_backPage := PAGE_GAME;
   end;
+  *}
 
   GuiEnable;
 
@@ -209,6 +210,7 @@ begin
   end;
 end;
 
+{*
 procedure TGame.DrawShop;
 begin
   ClearBackground(DARKGREEN);
@@ -219,6 +221,7 @@ begin
     m_backPage := PAGE_GAME;
   end;
 end;
+*}
 
 procedure TGame.DrawRules;
 const
@@ -287,10 +290,8 @@ begin
   m_progress := 0;
   m_page := PAGE_WELCOME;
   m_backPage := PAGE_WELCOME;
+  m_state := STATE_NONE;
   m_deck := TDeck.Create;
-{$IFNDEF ENABLE_THREADING}
-  m_deck.DealHand;
-{$ENDIF}
 
   m_font := LoadFont('assets/fonts/SF Atarian System.ttf');
 
@@ -311,12 +312,17 @@ var
   position: TVector2;
 
 begin
+  m_state := STATE_NONE;
+
   case m_page of
-    {$IFDEF ENABLE_THREADING}
     PAGE_WELCOME: UpdateWelcome;
-    {$ENDIF}
     PAGE_GAME:
       begin
+        if m_deck.CanPlay then
+          m_state := STATE_PLAYING
+        else
+          m_state := STATE_SHOPPING;
+
         if IsMouseButtonPressed(MOUSE_LEFT_BUTTON) then
         begin
           position := GetMousePosition;
@@ -340,18 +346,19 @@ begin
     PAGE_WELCOME: DrawWelcome;
     PAGE_GAME:    DrawGame;
     PAGE_RULES:   DrawRules;
-    PAGE_SHOP:    DrawShop;
+    //PAGE_SHOP:    DrawShop;
     PAGE_ABOUT:   DrawAbout;
   end;
 end;
 
-procedure TGame.DrawPeriodicCard(x, y: integer; const symbol, name: string;
-  number: integer);
+procedure TGame.DrawPeriodicCard(x, y: integer; const symbol, name,
+  action: string; number, cost: integer);
 begin
   DrawRectangle(x, y, CARD_WIDTH - 8, CARD_HEIGHT, LIGHTGRAY);
   DrawTextEx(m_font, PChar(IntToStr(number)), Vec2(x + 5, y + 5), 22, 1.0, BLACK);
   DrawTextEx(m_font, PChar(symbol), Vec2(x + 25, y + 50), 64, 1.0, BLACK);
-  DrawTextEx(m_font, PChar(name), Vec2(x + 5, y + 138), 22, 1.0, BLACK);
+  DrawTextEx(m_font, PChar(name), Vec2(x + 5, y + 118), 22, 1.0, BLACK);
+  DrawTextEx(m_font, PChar(action + ': ' + IntToStr(cost)), Vec2(x + 5, y + 138), 22, 1.0, RED);
 end;
 
 procedure TGame.DrawTooltipCard(x, y: integer; card: TCard);
