@@ -9,7 +9,7 @@ uses
   //raymath,
   //rlgl,
   raylib,
-  animator, coord, cardanim;
+  animator, coord;
 
 const
   screenWidth = 800;
@@ -18,9 +18,7 @@ const
 var
   delta: double;
   background: TTexture2D;
-  animate: TAnimator;
-  cardAnimate: TCardAnimate;
-  anim: TAnimate;
+  anim: TAnimator;
 
 begin
   // Initialization
@@ -29,30 +27,25 @@ begin
 
   background := LoadTexture('blue_green.png');
 
-  animate := TAnimator.Create;
-  cardAnimate := TCardAnimate.Create(background);
-  anim := animate.AddAnimationCoord(ANIM_EASEINOUT, cardAnimate,
-    CreateCoord(100, 100), CreateCoord(500, 100), 1.0);
-
-  anim.Start;
+  anim := TAnimator.Create;
 
   // Main game loop
   while not WindowShouldClose do
     begin
       // Update
       delta := GetFrameTime;
-      animate.Update(delta);
+      anim.Update(delta);
 
       // Draw
       BeginDrawing;
         ClearBackground(RAYWHITE);
         DrawTexture(background, 100, 100, WHITE);
-        animate.Draw;
+        anim.Draw;
       EndDrawing;
     end;
 
   // De-Initialization
-  animate.Free;
+  anim.Free;
 
   UnloadTexture(background);
 
