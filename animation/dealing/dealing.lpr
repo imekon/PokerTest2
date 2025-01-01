@@ -30,7 +30,7 @@ begin
 
   anim := TAnimator.Create;
   for i := 0 to 51 do
-    anim.Add(ANIM_EASEOUT, CreateCoord(100, 100), CreateCoord(600 - i * 1.1, 100), 0.2 * i, 0.7, background);
+    anim.Add(ANIM_EASEOUT, CreateCoord(100, 100), CreateCoord(600 - i * 1.3, 130), 0.11 * i, 0.1, background);
 
   // Main game loop
   while not WindowShouldClose do
