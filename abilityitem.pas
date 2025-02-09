@@ -30,10 +30,21 @@ uses
   Classes, SysUtils, fgl, carditem;
 
 type
-  TAbilityType = (ABILITY_ALLCARDSCORE, ABILITY_ADDITION, ABILITY_MULTIPLIER, ABILITY_CREDITS);
-  TConditionType = (CONDITION_CLUBS, CONDITION_DIAMONDS, CONDITION_HEARTS,
-    CONDITION_SPADES);
-  TValueIndex = (VALUE_ADDITION, VALUE_MULTIPLIER, VALUE_CREDITS);
+  TAbilityType = (ABILITY_ALLCARDSCORE,
+                  ABILITY_ADDITION,
+                  ABILITY_MULTIPLIER_ADD,
+                  ABILITY_MULTIPLIER_MULTIPLY,
+                  ABILITY_CREDITS);
+
+  TConditionType = (CONDITION_CLUBS,
+                    CONDITION_DIAMONDS,
+                    CONDITION_HEARTS,
+                    CONDITION_SPADES);
+
+  TValueIndex = (VALUE_ADDITION,
+                 VALUE_MULTIPLIER,
+                 VALUE_CREDITS);
+
   TAbilityMask = set of TAbilityType;
   TConditionMask = set of TConditionType;
 

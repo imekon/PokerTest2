@@ -100,7 +100,7 @@ begin
         m_allCardsScore := true;
       if ABILITY_ADDITION in conditionAbility.Actions then
         m_addition := m_addition + round(conditionAbility.Values[VALUE_ADDITION]);
-      if ABILITY_MULTIPLIER in conditionAbility.Actions then
+      if ABILITY_MULTIPLIER_ADD in conditionAbility.Actions then
         m_multiplier := m_multiplier * conditionAbility.Values[VALUE_MULTIPLIER];
 
     end;
