@@ -134,22 +134,6 @@ begin
   DrawTextEx(m_font, PChar('Rounds: ' + IntToStr(m_deck.Rounds) + ' : Discards: ' +
     IntToStr(m_deck.Discards)), Vec2(20, 230), 32, 1.0, WHITE);
 
-  // PERIODIC CARDS AVAILABLE
-  for i := 0 to 2 do
-  begin
-    element := m_deck.Elements[i];
-    DrawPeriodicCard(500 + CARD_WIDTH * i, 100, element.Symbol,
-      element.Name, 'action', element.Number, 10);
-  end;
-
-  // PERIODIC TABLE CARDS ACTIVE
-  for i := 0 to 4 do
-  begin
-    element := m_deck.Elements[i];
-    DrawPeriodicCard(LEFT_MARGIN + CARD_WIDTH * i, 300, element.Symbol,
-      element.Name, 'action', element.Number, 10);
-  end;
-
   // POKER CARDS
   x := LEFT_MARGIN;
   y := TOP_MARGIN;

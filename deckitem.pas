@@ -37,7 +37,6 @@ type
   TDeck = class
   private
     m_cards: TCards;
-    m_elements: TElements;
     m_hand: THand;
     m_games: integer;
     m_total: integer;
@@ -50,7 +49,6 @@ type
     m_roundsLadder: TRoundsLadder;
     function GetCanDiscard: boolean;
     function GetCanPlay: boolean;
-    function GetElements: TElementList;
     function GetLoaded: boolean;
     function GetProgress: single;
     function GetRemainingCards: integer;
@@ -73,7 +71,6 @@ type
     property Total: integer read m_total;
     property Points: integer read m_points;
     property Description: string read m_description;
-    property Elements: TElementList read GetElements;
     property Rounds: integer read m_rounds;
     property RoundsLadder: TRoundsLadder read m_roundsLadder;
     property ScoringLadder: TScoringLadder read m_scoring;
@@ -123,11 +120,6 @@ begin
   result := m_rounds > 0;
 end;
 
-function TDeck.GetElements: TElementList;
-begin
-  result := m_elements.Elements;
-end;
-
 function TDeck.GetLoaded: boolean;
 begin
   result := m_cards.ImagesLoaded and m_cards.TexturesLoaded;
@@ -147,9 +139,6 @@ begin
   m_hand := THand.Create;
   m_scoring := TScoringLadder.Create;
   m_roundsLadder := TRoundsLadder.Create;
-  m_elements := TElements.Create;
-  m_elements.LoadFromFile('assets/elements.db');
-  m_elements.Shuffle;
   m_override := TOverride.Create;
   m_rounds := 3;
   m_discards := 3;
@@ -162,7 +151,6 @@ begin
   m_cards.Free;
   m_scoring.Free;
   m_roundsLadder.Free;
-  m_elements.Free;
   m_override.Free;
   inherited Destroy;
 end;
