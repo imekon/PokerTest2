@@ -50,8 +50,6 @@ type
     property AnySelected: boolean read GetAnySelected;
   end;
 
-
-
 implementation
 
 { THand }
@@ -134,8 +132,6 @@ procedure THand.Remove(acard: TCard);
 begin
   m_cards.Remove(acard);
 end;
-
-
 
 end.
 

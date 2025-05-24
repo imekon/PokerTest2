@@ -36,6 +36,7 @@ type
 
   TDeck = class
   private
+    m_handSize: integer;
     m_cards: TCards;
     m_hand: THand;
     m_games: integer;
@@ -90,7 +91,7 @@ var
   card: TCard;
 
 begin
-  while m_hand.Cards.Count < 7 do
+  while m_hand.Cards.Count < m_handSize do
   begin
     card := m_cards.Remove;
     if card = nil then break;
@@ -135,13 +136,15 @@ end;
 
 constructor TDeck.Create;
 begin
+  m_handSize := 8;
+  m_rounds := 4;
+  m_discards := 3;
+
   m_cards := TCards.Create;
   m_hand := THand.Create;
   m_scoring := TScoringLadder.Create;
   m_roundsLadder := TRoundsLadder.Create;
   m_override := TOverride.Create;
-  m_rounds := 3;
-  m_discards := 3;
   m_games := 0;
 end;
 
@@ -170,7 +173,7 @@ var
   card: TCard;
 
 begin
-  for i := 1 to 7 do
+  for i := 1 to m_handSize do
   begin
     card := m_cards.Remove;
     m_hand.Add(card);

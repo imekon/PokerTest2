@@ -74,7 +74,7 @@ const
   BUTTON_WIDTH = 100;
   BUTTON_SPACING = 190;
 
-  LEFT_MARGIN = 100;
+  LEFT_MARGIN = 30;
   TOP_MARGIN = 500;
   SELECTED_OFFSET = 20;
   CARD_WIDTH = 120;
@@ -94,7 +94,7 @@ const
 begin
   ClearBackground(DARKGREEN);
 
-  DrawTextEx(m_font, 'Welcome to Periodic Poker!', Vec2(TEXT_LEFT, TEXT_TOP), 64, 1.0, WHITE);
+  DrawTextEx(m_font, 'Welcome to Poker Crafter!', Vec2(TEXT_LEFT, TEXT_TOP), 64, 1.0, WHITE);
 
   GuiProgressBar(RectangleCreate(TEXT_LEFT + 90, TEXT_TOP + 70, 400, 20), nil, nil, @m_progress, 0.0, 1.0);
 
