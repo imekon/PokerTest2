@@ -71,8 +71,9 @@ uses
 
 const
   BUTTON_MARGIN = 20;
-  BUTTON_WIDTH = 100;
-  BUTTON_SPACING = 190;
+  BUTTON_WIDTH = 140;
+  BUTTON_HEIGHT = 40;
+  BUTTON_SPACING = 170;
 
   LEFT_MARGIN = 30;
   TOP_MARGIN = 500;
@@ -103,7 +104,7 @@ begin
   else
     GuiDisable;
 
-  if GuiButton(RectangleCreate(TEXT_LEFT + 250, TEXT_TOP + 110, 100, 40), 'Start') = 1 then
+  if GuiButton(RectangleCreate(TEXT_LEFT + 250, TEXT_TOP + 110, 100, BUTTON_HEIGHT), 'Start') = 1 then
   begin
     m_deck.DealHand;
 
@@ -153,7 +154,7 @@ begin
   else
     GuiDisable;
 
-  if GuiButton(RectangleCreate(BUTTON_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Play Hand') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN, TOP_MARGIN + CARD_HEIGHT + OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT), 'Play Hand') = 1 then
     m_deck.PlayHand;
 
   if m_deck.CanDiscard and m_deck.Hand.AnySelected then
@@ -161,7 +162,7 @@ begin
   else
     GuiDisable;
 
-  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Discard') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING, TOP_MARGIN + CARD_HEIGHT + OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT), 'Discard') = 1 then
     m_deck.DiscardHand;
 
   if m_deck.CanPlay then
@@ -169,7 +170,7 @@ begin
   else
     GuiEnable;
 
-  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 2, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'New Deal') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 2, TOP_MARGIN + CARD_HEIGHT + OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT), 'New Deal') = 1 then
     m_deck.NewDeal;
 
   {*if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 3, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Shop') = 1 then
@@ -181,13 +182,13 @@ begin
 
   GuiEnable;
 
-  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 4, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Rules') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 4, TOP_MARGIN + CARD_HEIGHT + OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT), 'Rules') = 1 then
   begin
     m_page := PAGE_RULES;
     m_backPage := PAGE_GAME;
   end;
 
-  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 5, TOP_MARGIN + CARD_HEIGHT + OFFSET, 40, 40), '?') = 1 then
+  if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 5, TOP_MARGIN + CARD_HEIGHT + OFFSET, 40, BUTTON_HEIGHT), '?') = 1 then
   begin
     m_page := PAGE_ABOUT;
     m_backPage := PAGE_GAME;
