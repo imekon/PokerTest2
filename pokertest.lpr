@@ -33,7 +33,7 @@ uses
   //raymath,
   //rlgl,
   raylib, gamemain, carditem, deckitem, handitem, rulesitem, scoreitem,
-  elementitem, overrideitem, abilityitem, utilities;
+  elementitem, overrideitem, abilityitem, utilities, bonuscarditem;
 
 const
   screenWidth = 1024;
