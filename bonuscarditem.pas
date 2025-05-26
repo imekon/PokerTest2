@@ -5,7 +5,7 @@ unit bonuscarditem;
 interface
 
 uses
-  Types, Classes, SysUtils, StrUtils, fgl, raylib;
+  Types, Classes, SysUtils, StrUtils, fgl, raylib, gameintf;
 
 type
 
@@ -21,7 +21,7 @@ type
     constructor Create(const aname: string); virtual;
 
     function ConditionsMet: boolean; virtual;
-    procedure Actions; virtual;
+    procedure Actions(game: IGame); virtual;
 
     property Name: string read m_name;
     property Additive: integer read GetAdditive;
@@ -91,7 +91,7 @@ begin
   result := true;
 end;
 
-procedure TBonusCard.Actions;
+procedure TBonusCard.Actions(game: IGame);
 begin
 
 end;

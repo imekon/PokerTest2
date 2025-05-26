@@ -27,7 +27,7 @@ unit gamemain;
 interface
 
 uses
-  Classes, SysUtils, raylib, raygui, carditem, elementitem, handitem, deckitem,
+  Classes, SysUtils, raylib, raygui, gameintf, carditem, elementitem, handitem, deckitem,
   scoreitem, bonuscarditem;
 
 type
@@ -36,7 +36,7 @@ type
   TGamePage = (PAGE_WELCOME, PAGE_GAME, {* PAGE_SHOP, *} PAGE_RULES, PAGE_ABOUT);
   TGameState = (STATE_NONE, STATE_PLAYING, STATE_SHOPPING);
 
-  TGame = class
+  TGame = class(TInterfacedObject, IGame)
   private
     m_progress: single;
     m_font: TFont;
@@ -61,6 +61,9 @@ type
       number, cost: integer);
     procedure DrawTooltipCard(x, y: integer; card: TCard);
     procedure DrawTooltipElement(x, y: integer; element: TElement);
+    procedure AddAdditive(amount: integer);
+    procedure AddMultiplier(amount: integer);
+    procedure MultMultiplier(amount: single);
     property Hand: THand read GetHand;
   end;
 
@@ -358,6 +361,21 @@ end;
 procedure TGame.DrawTooltipElement(x, y: integer; element: TElement);
 begin
   //
+end;
+
+procedure TGame.AddAdditive(amount: integer);
+begin
+
+end;
+
+procedure TGame.AddMultiplier(amount: integer);
+begin
+
+end;
+
+procedure TGame.MultMultiplier(amount: single);
+begin
+
 end;
 
 end.
