@@ -20,6 +20,9 @@ type
   public
     constructor Create(const aname: string); virtual;
 
+    function ConditionsMet: boolean; virtual;
+    procedure Actions; virtual;
+
     property Name: string read m_name;
     property Additive: integer read GetAdditive;
     property Multiplier: integer read GetMultiplier;
@@ -81,6 +84,16 @@ end;
 constructor TBonusCard.Create(const aname: string);
 begin
   m_name := 'untitled';
+end;
+
+function TBonusCard.ConditionsMet: boolean;
+begin
+  result := true;
+end;
+
+procedure TBonusCard.Actions;
+begin
+
 end;
 
 { TAdditiveBonusCard }
