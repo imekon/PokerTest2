@@ -33,7 +33,7 @@ uses
 type
 
   { TGame }
-  TGamePage = (PAGE_WELCOME, PAGE_GAME, {* PAGE_SHOP, *} PAGE_RULES, PAGE_ABOUT);
+  TGamePage = (PAGE_WELCOME, PAGE_GAME, PAGE_RULES, PAGE_ABOUT);
   TGameState = (STATE_NONE, STATE_PLAYING, STATE_SHOPPING);
 
   TGame = class(TInterfacedObject, IGame)
@@ -48,7 +48,6 @@ type
     function GetHand: THand;
     procedure DrawWelcome;
     procedure DrawGame;
-    //procedure DrawShop;
     procedure DrawRules;
     procedure DrawAbout;
     procedure UpdateWelcome;
@@ -57,13 +56,12 @@ type
     destructor Destroy; override;
     procedure Update(delta: single);
     procedure Draw;
-    procedure DrawPeriodicCard(x, y: integer; const symbol, name, action: string;
-      number, cost: integer);
-    procedure DrawTooltipCard(x, y: integer; card: TCard);
-    procedure DrawTooltipElement(x, y: integer; element: TElement);
+
+    // IGame
     procedure AddAdditive(amount: integer);
     procedure AddMultiplier(amount: integer);
     procedure MultMultiplier(amount: single);
+
     property Hand: THand read GetHand;
   end;
 
@@ -178,13 +176,6 @@ begin
   if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 2, TOP_MARGIN + CARD_HEIGHT + OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT), 'New Deal') = 1 then
     m_deck.NewDeal;
 
-  {*if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 3, TOP_MARGIN + CARD_HEIGHT + OFFSET, 160, 40), 'Shop') = 1 then
-  begin
-    m_page := PAGE_SHOP;
-    m_backPage := PAGE_GAME;
-  end;
-  *}
-
   GuiEnable;
 
   if GuiButton(RectangleCreate(BUTTON_MARGIN + BUTTON_SPACING * 4, TOP_MARGIN + CARD_HEIGHT + OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT), 'Rules') = 1 then
@@ -199,19 +190,6 @@ begin
     m_backPage := PAGE_GAME;
   end;
 end;
-
-{*
-procedure TGame.DrawShop;
-begin
-  ClearBackground(DARKGREEN);
-  DrawTextEx(m_font, 'Shop', Vec2(100, 200), 48, 1.0, RAYWHITE);
-  if GuiButton(RectangleCreate(100, 300, 100, 30), 'Back') = 1 then
-  begin
-    m_page := PAGE_GAME;
-    m_backPage := PAGE_GAME;
-  end;
-end;
-*}
 
 procedure TGame.DrawRules;
 const
@@ -343,39 +321,19 @@ begin
   end;
 end;
 
-procedure TGame.DrawPeriodicCard(x, y: integer; const symbol, name,
-  action: string; number, cost: integer);
-begin
-  DrawRectangle(x, y, CARD_WIDTH - 8, CARD_HEIGHT, LIGHTGRAY);
-  DrawTextEx(m_font, PChar(IntToStr(number)), Vec2(x + 5, y + 5), 22, 1.0, BLACK);
-  DrawTextEx(m_font, PChar(symbol), Vec2(x + 25, y + 50), 64, 1.0, BLACK);
-  DrawTextEx(m_font, PChar(name), Vec2(x + 5, y + 118), 22, 1.0, BLACK);
-  DrawTextEx(m_font, PChar(action + ': ' + IntToStr(cost)), Vec2(x + 5, y + 138), 22, 1.0, RED);
-end;
-
-procedure TGame.DrawTooltipCard(x, y: integer; card: TCard);
-begin
-  //
-end;
-
-procedure TGame.DrawTooltipElement(x, y: integer; element: TElement);
-begin
-  //
-end;
-
 procedure TGame.AddAdditive(amount: integer);
 begin
-
+  m_deck.AddAdditive(amount);
 end;
 
 procedure TGame.AddMultiplier(amount: integer);
 begin
-
+  m_deck.AddMultiplier(amount);
 end;
 
 procedure TGame.MultMultiplier(amount: single);
 begin
-
+  m_deck.MultMultiplier(amount);
 end;
 
 end.

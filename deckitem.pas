@@ -27,8 +27,7 @@ unit deckitem;
 interface
 
 uses
-  Classes, SysUtils, carditem, handitem, rulesitem, scoreitem, overrideitem,
-  elementitem;
+  Classes, SysUtils, carditem, handitem, rulesitem, scoreitem, overrideitem;
 
 type
 
@@ -36,6 +35,8 @@ type
 
   TDeck = class
   private
+    m_additive: integer;
+    m_multiplier: single;
     m_handSize: integer;
     m_cards: TCards;
     m_hand: THand;
@@ -65,6 +66,9 @@ type
     procedure PlayHand;
     procedure DiscardHand;
     procedure NewDeal;
+    procedure AddAdditive(amount: integer);
+    procedure AddMultiplier(amount: integer);
+    procedure MultMultiplier(amount: single);
     property Progress: single read GetProgress;
     property Hand: THand read m_hand;
     property Remaining: integer read GetRemainingCards;
@@ -136,6 +140,9 @@ end;
 
 constructor TDeck.Create;
 begin
+  m_additive := 0;
+  m_multiplier := 1.0;
+
   m_handSize := 8;
   m_rounds := 4;
   m_discards := 3;
@@ -251,7 +258,7 @@ begin
   rules := TRules.Create(playList);
   score := rules.Apply;
   m_points := m_scoring.Scoring(score, rules.Score(m_override),
-    m_override.Addition, m_override.Multiplier);
+    m_override.Addition + m_additive, m_override.Multiplier * m_multiplier);
   m_total := m_total + m_points;
   m_description := GetScoreDescription(score);
   rules.Free;
@@ -313,6 +320,21 @@ begin
   m_cards.Shuffle;
 
   DealHand;
+end;
+
+procedure TDeck.AddAdditive(amount: integer);
+begin
+  inc(m_additive, amount);
+end;
+
+procedure TDeck.AddMultiplier(amount: integer);
+begin
+  m_multiplier := m_multiplier + amount;
+end;
+
+procedure TDeck.MultMultiplier(amount: single);
+begin
+  m_multiplier := m_multiplier * amount;
 end;
 
 end.

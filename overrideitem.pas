@@ -35,7 +35,6 @@ type
 
   TOverride = class
   private
-    m_abilities: TAbilityList;
     m_addition: integer;
     m_multiplier: single;
     m_allCardsScore: boolean;
@@ -43,7 +42,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Process(cards: TCardList; abilities: TAbilityList);
+    procedure Process(cards: TCardList);
     property Addition: integer read m_addition;
     property Multiplier: single read m_multiplier;
     property AllCardsScore: boolean read m_allCardsScore;
@@ -58,8 +57,6 @@ begin
   m_addition := 0;
   m_multiplier := 1.0;
   m_allCardsScore := false;
-
-  m_abilities := TAbilityList.Create;
 end;
 
 constructor TOverride.Create;
@@ -68,43 +65,13 @@ begin
 end;
 
 destructor TOverride.Destroy;
-var
-  ability: TAbility;
-
 begin
-  for ability in m_abilities do
-    ability.Free;
-
-  m_abilities.Free;
-
   inherited Destroy;
 end;
 
-procedure TOverride.Process(cards: TCardList; abilities: TAbilityList);
-var
-  ability: TAbility;
-  conditionAbility: TConditionAbility;
-
+procedure TOverride.Process(cards: TCardList);
 begin
   Reset;
-
-  for ability in m_abilities do
-  begin
-    if ability is TConditionAbility then
-    begin
-      conditionAbility := ability as TConditionAbility;
-
-      // NEED LIST OF CHOSEN CARDS TO CONSIDER!
-      // NEED TO CONSIDER CONDITIONS!
-      if ABILITY_ALLCARDSCORE in conditionAbility.Actions then
-        m_allCardsScore := true;
-      if ABILITY_ADDITION in conditionAbility.Actions then
-        m_addition := m_addition + round(conditionAbility.Values[VALUE_ADDITION]);
-      if ABILITY_MULTIPLIER_ADD in conditionAbility.Actions then
-        m_multiplier := m_multiplier * conditionAbility.Values[VALUE_MULTIPLIER];
-
-    end;
-  end;
 end;
 
 end.
