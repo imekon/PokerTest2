@@ -27,7 +27,8 @@ unit gamemain;
 interface
 
 uses
-  Classes, SysUtils, raylib, raygui, carditem, elementitem, handitem, deckitem, scoreitem;
+  Classes, SysUtils, raylib, raygui, carditem, elementitem, handitem, deckitem,
+  scoreitem, bonuscarditem;
 
 type
 
@@ -43,6 +44,7 @@ type
     m_state: TGameState;
     m_backPage: TGamePage;
     m_deck: TDeck;
+    m_bonusCardManager: TBonusCardManager;
     function GetHand: THand;
     procedure DrawWelcome;
     procedure DrawGame;
@@ -277,6 +279,7 @@ begin
   m_backPage := PAGE_WELCOME;
   m_state := STATE_NONE;
   m_deck := TDeck.Create;
+  m_bonusCardManager := TBonusCardManager.Create;
 
   m_font := LoadFont('assets/fonts/SF Atarian System.ttf');
 
@@ -286,6 +289,7 @@ end;
 
 destructor TGame.Destroy;
 begin
+  m_bonusCardManager.Free;
   m_deck.Free;
   UnloadFont(m_font);
   inherited;
